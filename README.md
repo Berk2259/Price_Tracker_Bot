@@ -21,7 +21,6 @@ Price_Tracker_Bot/
 | Bot | Python 3.14 |
 | Bildirim | Telegram Bot API |
 
-Panel ve bot birbirine doğrudan bağlanmaz, ikisi de Supabase üzerinden çalışır.
 
 ## Kurulum
 
@@ -45,9 +44,6 @@ SUPABASE_URL=
 SUPABASE_SERVICE_ROLE_KEY=
 ```
 
-Service role anahtarı çok güçlüdür: sadece botta kullanılır, panele ve
-GitHub'a asla konmaz.
-
 ## Veritabanı tabloları
 
 | Tablo | Amaç |
@@ -61,9 +57,6 @@ GitHub'a asla konmaz.
 | `price_history` | Fiyat geçmişi |
 | `notification_log` | Gönderilen bildirim kayıtları |
 
-Tasarım kararı: Fiyat müşteri başına değil, ürün başına bir kez çekilir.
-Aynı ürünü 10 müşteri takip etse de siteye tek istek gider.
-
 ## Fiyat çekme yaklaşımı
 
 Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
@@ -75,20 +68,9 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 
 ## Yapılanlar
 
-- [x] Python, Git kurulumu
-- [x] GitHub reposu bağlandı
-- [x] Supabase projesi oluşturuldu (Frankfurt, RLS otomatik açık)
+- [x] Supabase projesi ve veritabanı şeması (8 tablo)
 - [x] Telegram botu oluşturuldu
-- [x] `.env` ve bağlantı testi
-- [x] Veritabanı tabloları
-- [x] Başlangıç kategorileri eklendi
-- [x] Müşteri bağlama akışı (`/start KOD` ile chat ID kaydı), test müşterisiyle doğrulandı
-- [x] Bota tablo yetkisi verildi (service_role)
+- [x] Müşteri bağlama akışı (`/start KOD` ile chat ID kaydı)
+- [x] Bot -> müşteri Telegram bildirimi doğrulandı
+- [x] Fiyat okuyucu (JSON-LD): sayfadan fiyat ve stok bilgisi çekiyor
 
-## Yapılacaklar
-
-- [ ] Adapter yapısı ve ilk fiyat kaynağı
-- [ ] Bildirim mantığı
-- [ ] Next.js admin paneli
-- [ ] Zamanlama ve yayına alma
-- [ ] Bildirim gönderme testi (bot -> müşteri)
