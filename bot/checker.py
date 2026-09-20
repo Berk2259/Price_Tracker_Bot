@@ -65,16 +65,25 @@ def check_product(product: dict):
         return None
     return (product, float(old_price), result.price)
 
+def is_due(product: dict) -> bool:
+    """Ürünün kontrol zamanı geldi mi?"""
+    last = product["last_checked_at"]
+    if last is None:
+        return True
+    elapsed = (datetime.now(timezone.utc) - datetime.fromisoformat(last)).total_seconds() / 60
+    # 1 dakika tolerans: zamanlayıcı birkaç saniye erken çalışırsa tur atlanmasın
+    return elapsed >= product["check_interval_minutes"] - 1
 
 def main() -> None:
     products = (
         supabase.table("products")
-        .select("id, name, url, current_price")
+        .select("id, name, url, current_price, last_checked_at, check_interval_minutes")
         .eq("is_active", True)
         .execute()
         .data
     )
-    print(f"{len(products)} aktif ürün kontrol edilecek")
+    products = [p for p in products if is_due(p)]
+    print(f"{len(products)} ürünün kontrol zamanı geldi")
 
     changes = []
     for product in products:
