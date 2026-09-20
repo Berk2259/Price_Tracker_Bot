@@ -1,3 +1,4 @@
+import asyncio
 import os
 from datetime import datetime, timezone
 
@@ -5,6 +6,7 @@ from dotenv import load_dotenv
 from supabase import create_client
 
 from adapters.json_ld import fetch_price
+from notifier import send_notifications
 
 load_dotenv()
 
@@ -18,7 +20,8 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def check_product(product: dict) -> None:
+def check_product(product: dict):
+    """Fiyat değiştiyse (product, eski, yeni) döndürür, yoksa None."""
     try:
         result = fetch_price(product["url"])
     except Exception as e:
@@ -29,7 +32,7 @@ def check_product(product: dict) -> None:
             .execute()
         )
         print(f"[HATA] {product['name']}: {e}")
-        return
+        return None
 
     supabase.table("price_history").insert(
         {
@@ -56,6 +59,12 @@ def check_product(product: dict) -> None:
 
     print(f"[OK] {product['name']}: {product['current_price']} -> {result.price} {result.currency}")
 
+    old_price = product["current_price"]
+    # İlk okumada (eski fiyat yok) ya da fiyat aynıysa bildirim yok
+    if old_price is None or float(old_price) == result.price:
+        return None
+    return (product, float(old_price), result.price)
+
 
 def main() -> None:
     products = (
@@ -66,8 +75,16 @@ def main() -> None:
         .data
     )
     print(f"{len(products)} aktif ürün kontrol edilecek")
+
+    changes = []
     for product in products:
-        check_product(product)
+        change = check_product(product)
+        if change:
+            changes.append(change)
+
+    if changes:
+        print(f"{len(changes)} üründe fiyat değişti, bildirimler işleniyor")
+        asyncio.run(send_notifications(changes))
 
 
 if __name__ == "__main__":
