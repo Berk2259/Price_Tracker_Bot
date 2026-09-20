@@ -183,4 +183,5 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Kontrolcü: aktif ürünlerin fiyatını okuyup geçmişe kaydediyor
 - [x] Fiyat değişiminde Telegram bildirimi (her değişimde ve hedef fiyata düşünce)
 - [x] Ürün bazlı kontrol aralığı (sırası gelmeyen ürün atlanıyor)
+- [x] Panel iskeleti: admin girişi/çıkışı ve giriş koruması
 
