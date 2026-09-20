@@ -1,0 +1,18 @@
+# Gizli anahtarlar
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node / Next.js
+node_modules/
+.next/
+
+# Diğer
+.DS_Store
+*.log
