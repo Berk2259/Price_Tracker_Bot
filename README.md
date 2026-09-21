@@ -15,7 +15,7 @@ Price_Tracker_Bot/
 │   ├── requirements.txt
 │   └── .env           Gizli anahtarlar (GitHub'a gitmez)
 ├── web/
-│   ├── src/app/           Sayfalar (giriş, ana sayfa, müşteriler, kategoriler, kaynaklar)
+│   ├── src/app/           Sayfalar (giriş, ana sayfa, müşteriler, kategoriler, kaynaklar, ürünler)
 │   ├── src/lib/supabase/  Supabase bağlantıları (tarayıcı ve sunucu)
 │   ├── src/proxy.ts       Giriş koruması
 │   ├── src/components/    Ortak bileşenler (yan menü, butonlar)
@@ -52,6 +52,10 @@ Aynı ürünü birden çok müşteri takip etse de kaynağa tek istek gider.
 Her ürünün kendi kontrol aralığı vardır (`check_interval_minutes`). Kontrolcü
 ne kadar sık çalıştırılırsa çalıştırılsın, yalnızca aralığı dolan ürünlere
 bakar.
+
+Kontrol aralığı en az 5 dakikadır. Bir ürünün linki değiştirilirse eski fiyat
+sıfırlanır, böylece bot yeni sayfadaki fiyatı eski ürünle kıyaslayıp yanlış
+bildirim göndermez.
 
 ### Bildirim kuralları
 
@@ -192,4 +196,4 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Panel: müşteri yönetimi (ekleme, satır içi düzenleme, silme, Telegram bağlama linki)
 - [x] Panel: kategori yönetimi (ekleme, satır içi düzenleme, silme)
 - [x] Panel: kaynak yönetimi (ekleme, satır içi düzenleme, silme)
-
+- [x] Panel: ürün yönetimi (ekleme, satır içi düzenleme, silme, kategori ve kaynak seçimi)
