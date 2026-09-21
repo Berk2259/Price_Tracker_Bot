@@ -15,7 +15,7 @@ Price_Tracker_Bot/
 │   ├── requirements.txt
 │   └── .env           Gizli anahtarlar (GitHub'a gitmez)
 ├── web/
-│   ├── src/app/           Sayfalar (giriş, ana sayfa, müşteriler)
+│   ├── src/app/           Sayfalar (giriş, ana sayfa, müşteriler, kategoriler)
 │   ├── src/lib/supabase/  Supabase bağlantıları (tarayıcı ve sunucu)
 │   ├── src/proxy.ts       Giriş koruması
 │   ├── src/components/    Ortak bileşenler (yan menü, butonlar)
@@ -189,5 +189,5 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Ürün bazlı kontrol aralığı (sırası gelmeyen ürün atlanıyor)
 - [x] Panel iskeleti: admin girişi/çıkışı ve giriş koruması
 - [x] Panel: yan menülü düzen ve özet kartlarıyla ana sayfa
-- [x] Panel: müşteri listesi, ekleme, silme ve Telegram bağlama linki
+- [x] Panel: müşteri yönetimi (ekleme, satır içi düzenleme, silme, Telegram bağlama linki)
 
