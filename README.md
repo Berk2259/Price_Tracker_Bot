@@ -15,9 +15,10 @@ Price_Tracker_Bot/
 │   ├── requirements.txt
 │   └── .env           Gizli anahtarlar (GitHub'a gitmez)
 ├── web/
-│   ├── src/app/           Sayfalar (giriş, ana sayfa)
+│   ├── src/app/           Sayfalar (giriş, ana sayfa, müşteriler)
 │   ├── src/lib/supabase/  Supabase bağlantıları (tarayıcı ve sunucu)
 │   ├── src/proxy.ts       Giriş koruması
+│   ├── src/components/    Ortak bileşenler (yan menü, butonlar)
 │   └── .env.local         Panel ayarları (GitHub'a gitmez)
 └── supabase/          Veritabanı şema dosyaları (SQL)
 ```
@@ -67,10 +68,10 @@ her bildirim `notification_log` tablosuna kaydedilir.
 
 ### Müşteri bağlama
 
-Her müşterinin panelde otomatik üretilen bir bağlama kodu vardır. Müşteri
-bota `/start KOD` yazdığında bot Telegram chat ID'sini o müşteriye kaydeder.
-Telegram, kullanıcı bota önce yazmadan ona mesaj atmaya izin vermediği için
-bu adım gereklidir.
+Her müşterinin panelde otomatik üretilen bir bağlama kodu vardır. Panelden
+müşteri için bağlama linki kopyalanıp müşteriye gönderilir. Müşteri linke
+tıklayıp Start'a bastığında (bot `/start KOD` komutunu alır) bot Telegram
+chat ID'sini o müşteriye kaydeder.
 
 ### Panel erişimi
 
@@ -134,7 +135,10 @@ Yeni bir terminal açıldığında önce sanal ortam tekrar etkinleştirilir
 ```
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+TELEGRAM_BOT_USERNAME=
 ```
+`TELEGRAM_BOT_USERNAME`, müşteri bağlama linkini oluşturmak için botun
+kullanıcı adıdır (başında `@` olmadan).
 
 Panelde yalnızca `sb_publishable_` ile başlayan anahtar kullanılır.
 Service role anahtarı panele asla konmaz.
@@ -184,4 +188,6 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Fiyat değişiminde Telegram bildirimi (her değişimde ve hedef fiyata düşünce)
 - [x] Ürün bazlı kontrol aralığı (sırası gelmeyen ürün atlanıyor)
 - [x] Panel iskeleti: admin girişi/çıkışı ve giriş koruması
+- [x] Panel: yan menülü düzen ve özet kartlarıyla ana sayfa
+- [x] Panel: müşteri listesi, ekleme, silme ve Telegram bağlama linki
 

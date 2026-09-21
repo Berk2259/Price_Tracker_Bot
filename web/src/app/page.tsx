@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
+
 const cards = [
   { table: "customers", label: "Müşteriler", href: "/customers" },
   { table: "categories", label: "Kategoriler", href: "/categories" },
