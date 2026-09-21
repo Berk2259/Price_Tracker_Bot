@@ -15,7 +15,7 @@ Price_Tracker_Bot/
 │   ├── requirements.txt
 │   └── .env           Gizli anahtarlar (GitHub'a gitmez)
 ├── web/
-│   ├── src/app/           Sayfalar (giriş, ana sayfa, müşteriler, kategoriler, kaynaklar, ürünler, takipler, fiyat geçmişi)
+│   ├── src/app/           Sayfalar (giriş, ana sayfa, müşteriler, kategoriler, kaynaklar, ürünler, takipler, fiyat geçmişi, bildirimler)
 │   ├── src/lib/supabase/  Supabase bağlantıları (tarayıcı ve sunucu)
 │   ├── src/proxy.ts       Giriş koruması
 │   ├── src/components/    Ortak bileşenler (yan menü, butonlar)
@@ -199,3 +199,4 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Panel: ürün yönetimi (ekleme, satır içi düzenleme, silme, kategori ve kaynak seçimi)
 - [x] Panel: takip yönetimi (müşteri-ürün eşleştirme, hedef fiyat ve bildirim kuralı)
 - [x] Panel: fiyat geçmişi (listeleme, ürüne göre filtreleme, kayıt silme)
+- [x] Panel: bildirim kayıtları (listeleme, müşteriye göre filtreleme, kayıt silme)
