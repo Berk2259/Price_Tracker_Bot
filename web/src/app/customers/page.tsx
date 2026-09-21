@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { CopyButton } from "@/components/copy-button";
-import { DeleteCustomerButton } from "@/components/delete-customer-button";
+import { CustomerRow } from "@/components/customer-row";
 import { addCustomer } from "./actions";
 
 export default async function CustomersPage() {
@@ -54,36 +53,21 @@ export default async function CustomersPage() {
           </thead>
           <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
             {customers?.map((customer) => (
-              <tr key={customer.id}>
-                <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-50">
-                  {customer.name}
-                </td>
-                <td className="px-4 py-3">
-                  {customer.telegram_chat_id ? (
-                    <span className="text-emerald-600">Bağlı</span>
-                  ) : (
-                    <span className="text-zinc-500">Bağlı değil</span>
-                  )}
-                </td>
-                <td className="px-4 py-3 text-zinc-700 dark:text-zinc-300">
-                  {customer.is_active ? "Aktif" : "Pasif"}
-                </td>
-                <td className="px-4 py-3 text-zinc-500">
-                  {new Date(customer.created_at).toLocaleDateString("tr-TR")}
-                </td>
-                <td className="px-4 py-3">
-                  {!customer.telegram_chat_id && botUsername ? (
-                    <CopyButton
-                      text={`https://t.me/${botUsername}?start=${customer.link_token}`}
-                    />
-                  ) : (
-                    <span className="text-zinc-400">-</span>
-                  )}
-                </td>
-                <td className="px-4 py-3">
-                  <DeleteCustomerButton id={customer.id} name={customer.name} />
-                </td>
-              </tr>
+              <CustomerRow
+                key={customer.id}
+                customer={{
+                  id: customer.id,
+                  name: customer.name,
+                  telegram_chat_id: customer.telegram_chat_id,
+                  is_active: customer.is_active,
+                  created_at: customer.created_at,
+                }}
+                linkUrl={
+                  !customer.telegram_chat_id && botUsername
+                    ? `https://t.me/${botUsername}?start=${customer.link_token}`
+                    : null
+                }
+              />
             ))}
             {customers?.length === 0 && (
               <tr>
