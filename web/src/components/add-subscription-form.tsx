@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { addSubscription } from "@/app/subscriptions/actions";
+import { addSubscription } from "@/app/admin/subscriptions/actions";
 
 type Option = { id: number; name: string };
 

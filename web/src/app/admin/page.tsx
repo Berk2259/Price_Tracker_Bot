@@ -3,13 +3,13 @@ import { createClient } from "@/lib/supabase/server";
 
 
 const cards = [
-  { table: "customers", label: "Müşteriler", href: "/customers" },
-  { table: "categories", label: "Kategoriler", href: "/categories" },
-  { table: "sources", label: "Kaynaklar", href: "/sources" },
-  { table: "products", label: "Ürünler", href: "/products" },
-  { table: "subscriptions", label: "Takipler", href: "/subscriptions" },
-  { table: "price_history", label: "Fiyat kayıtları", href: "/price-history" },
-  { table: "notification_log", label: "Bildirimler", href: "/notifications" },
+  { table: "customers", label: "Müşteriler", href: "/admin/customers" },
+  { table: "categories", label: "Kategoriler", href: "/admin/categories" },
+  { table: "sources", label: "Kaynaklar", href: "/admin/sources" },
+  { table: "products", label: "Ürünler", href: "/admin/products" },
+  { table: "subscriptions", label: "Takipler", href: "/admin/subscriptions" },
+  { table: "price_history", label: "Fiyat kayıtları", href: "/admin/price-history" },
+  { table: "notification_log", label: "Bildirimler", href: "/admin/notifications" },
 ];
 
 export default async function HomePage() {

@@ -200,3 +200,4 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Panel: takip yönetimi (müşteri-ürün eşleştirme, hedef fiyat ve bildirim kuralı)
 - [x] Panel: fiyat geçmişi (listeleme, ürüne göre filtreleme, kayıt silme)
 - [x] Panel: bildirim kayıtları (listeleme, müşteriye göre filtreleme, kayıt silme)
+- [x] Panel: müşteriye kategori atama (Market, E-ticaret, Uçak bileti vb.)

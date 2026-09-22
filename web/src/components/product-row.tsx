@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { deleteProduct, updateProduct } from "@/app/products/actions";
+import { deleteProduct, updateProduct } from "@/app/admin/products/actions";
 
 type Option = { id: number; name: string };
 

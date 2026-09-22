@@ -42,7 +42,7 @@ export async function addSource(input: SourceInput): Promise<Result> {
     };
   }
 
-  revalidatePath("/sources");
+  revalidatePath("/admin/sources");
   return { ok: true };
 }
 
@@ -74,7 +74,7 @@ export async function updateSource(
     };
   }
 
-  revalidatePath("/sources");
+  revalidatePath("/admin/sources");
   return { ok: true };
 }
 
@@ -92,6 +92,6 @@ export async function deleteSource(id: number): Promise<Result> {
     };
   }
 
-  revalidatePath("/sources");
+  revalidatePath("/admin/sources");
   return { ok: true };
 }

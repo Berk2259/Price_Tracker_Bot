@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { deletePriceRecord } from "@/app/price-history/actions";
+import { deletePriceRecord } from "@/app/admin/price-history/actions";
 
 type PriceRecord = {
   id: number;

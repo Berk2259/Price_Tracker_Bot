@@ -29,17 +29,19 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isLoginPage = request.nextUrl.pathname === "/login";
+  const { pathname } = request.nextUrl;
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isAdminLogin = pathname === "/admin/login";
 
-  if (!user && !isLoginPage) {
+  if (isAdminRoute && !isAdminLogin && !user) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = "/admin/login";
     return NextResponse.redirect(url);
   }
 
-  if (user && isLoginPage) {
+  if (isAdminLogin && user) {
     const url = request.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = "/admin";
     return NextResponse.redirect(url);
   }
 

@@ -16,6 +16,6 @@ export async function deleteNotification(
     return { ok: false, message: "Silinemedi." };
   }
 
-  revalidatePath("/notifications");
+  revalidatePath("/admin/notifications");
   return { ok: true };
 }

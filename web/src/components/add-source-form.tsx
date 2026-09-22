@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { addSource } from "@/app/sources/actions";
+import { addSource } from "@/app/admin/sources/actions";
 import { SOURCE_METHODS } from "@/lib/source-methods";
 
 const inputClass =

@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { CopyButton } from "@/components/copy-button";
 import { DeleteCustomerButton } from "@/components/delete-customer-button";
-import { updateCustomer } from "@/app/customers/actions";
+import { updateCustomer } from "@/app/admin/customers/actions";
 
 type Option = { id: number; name: string };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { deleteNotification } from "@/app/notifications/actions";
+import { deleteNotification } from "@/app/admin/notifications/actions";
 
 type Notification = {
   id: number;

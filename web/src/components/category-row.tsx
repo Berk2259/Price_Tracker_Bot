@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { deleteCategory, updateCategory } from "@/app/categories/actions";
+import { deleteCategory, updateCategory } from "@/app/admin/categories/actions";
 
 type Category = { id: number; name: string; created_at: string };
 

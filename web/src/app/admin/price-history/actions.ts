@@ -13,6 +13,6 @@ export async function deletePriceRecord(
     return { ok: false, message: "Silinemedi." };
   }
 
-  revalidatePath("/price-history");
+  revalidatePath("/admin/price-history");
   return { ok: true };
 }

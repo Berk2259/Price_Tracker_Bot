@@ -65,7 +65,7 @@ export async function addProduct(input: ProductInput): Promise<Result> {
     return { ok: false, message: errorMessage(error.code, "Ürün eklenemedi.") };
   }
 
-  revalidatePath("/products");
+  revalidatePath("/admin/products");
   return { ok: true };
 }
 
@@ -106,7 +106,7 @@ export async function updateProduct(
     return { ok: false, message: errorMessage(error.code, "Kaydedilemedi.") };
   }
 
-  revalidatePath("/products");
+  revalidatePath("/admin/products");
   return { ok: true };
 }
 
@@ -118,6 +118,6 @@ export async function deleteProduct(id: number): Promise<Result> {
     return { ok: false, message: "Silinemedi." };
   }
 
-  revalidatePath("/products");
+  revalidatePath("/admin/products");
   return { ok: true };
 }

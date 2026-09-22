@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { deleteSource, updateSource } from "@/app/sources/actions";
+import { deleteSource, updateSource } from "@/app/admin/sources/actions";
 import { SOURCE_METHODS, methodLabel } from "@/lib/source-methods";
 
 type Source = {

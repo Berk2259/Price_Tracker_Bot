@@ -11,14 +11,14 @@ export async function addCustomer(formData: FormData) {
   const supabase = await createClient();
   await supabase.from("customers").insert({ name });
 
-  revalidatePath("/customers");
+  revalidatePath("/admin/customers");
 }
 
 export async function deleteCustomer(id: number) {
   const supabase = await createClient();
   await supabase.from("customers").delete().eq("id", id);
 
-  revalidatePath("/customers");
+  revalidatePath("/admin/customers");
 }
 
 export async function updateCustomer(
@@ -81,6 +81,6 @@ export async function updateCustomer(
       .insert(toAdd.map((category_id) => ({ customer_id: id, category_id })));
   }
 
-  revalidatePath("/customers");
+  revalidatePath("/admin/customers");
   return { ok: true };
 }

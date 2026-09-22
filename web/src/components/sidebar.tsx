@@ -5,14 +5,14 @@ import { usePathname } from "next/navigation";
 import { LogoutButton } from "@/components/logout-button";
 
 const items = [
-  { href: "/", label: "Ana sayfa" },
-  { href: "/customers", label: "Müşteriler" },
-  { href: "/categories", label: "Kategoriler" },
-  { href: "/sources", label: "Kaynaklar" },
-  { href: "/products", label: "Ürünler" },
-  { href: "/subscriptions", label: "Takipler" },
-  { href: "/price-history", label: "Fiyat geçmişi" },
-  { href: "/notifications", label: "Bildirimler" },
+  { href: "/admin", label: "Ana sayfa" },
+  { href: "/admin/customers", label: "Müşteriler" },
+  { href: "/admin/categories", label: "Kategoriler" },
+  { href: "/admin/sources", label: "Kaynaklar" },
+  { href: "/admin/products", label: "Ürünler" },
+  { href: "/admin/subscriptions", label: "Takipler" },
+  { href: "/admin/price-history", label: "Fiyat geçmişi" },
+  { href: "/admin/notifications", label: "Bildirimler" },
 ];
 
 export function Sidebar({ email }: { email: string | undefined }) {
@@ -27,8 +27,8 @@ export function Sidebar({ email }: { email: string | undefined }) {
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
         {items.map((item) => {
           const active =
-            item.href === "/"
-              ? pathname === "/"
+            item.href === "/admin"
+              ? pathname === "/admin"
               : pathname.startsWith(item.href);
 
           return (

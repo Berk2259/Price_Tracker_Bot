@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { addCategory } from "@/app/categories/actions";
+import { addCategory } from "@/app/admin/categories/actions";
 
 export function AddCategoryForm() {
   const [name, setName] = useState("");

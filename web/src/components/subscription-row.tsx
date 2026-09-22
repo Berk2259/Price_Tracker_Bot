@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import {
   deleteSubscription,
   updateSubscription,
-} from "@/app/subscriptions/actions";
+} from "@/app/admin/subscriptions/actions";
 
 type Subscription = {
   id: number;

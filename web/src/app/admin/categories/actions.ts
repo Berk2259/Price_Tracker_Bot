@@ -26,7 +26,7 @@ export async function addCategory(name: string): Promise<Result> {
     };
   }
 
-  revalidatePath("/categories");
+  revalidatePath("/admin/categories");
   return { ok: true };
 }
 
@@ -55,7 +55,7 @@ export async function updateCategory(
     };
   }
 
-  revalidatePath("/categories");
+  revalidatePath("/admin/categories");
   return { ok: true };
 }
 
@@ -73,6 +73,6 @@ export async function deleteCategory(id: number): Promise<Result> {
     };
   }
 
-  revalidatePath("/categories");
+  revalidatePath("/admin/categories");
   return { ok: true };
 }

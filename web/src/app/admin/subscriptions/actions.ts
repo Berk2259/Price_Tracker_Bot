@@ -59,7 +59,7 @@ export async function addSubscription(input: {
     };
   }
 
-  revalidatePath("/subscriptions");
+  revalidatePath("/admin/subscriptions");
   return { ok: true };
 }
 
@@ -90,7 +90,7 @@ export async function updateSubscription(
     return { ok: false, message: "Kaydedilemedi." };
   }
 
-  revalidatePath("/subscriptions");
+  revalidatePath("/admin/subscriptions");
   return { ok: true };
 }
 
@@ -102,6 +102,6 @@ export async function deleteSubscription(id: number): Promise<Result> {
     return { ok: false, message: "Silinemedi." };
   }
 
-  revalidatePath("/subscriptions");
+  revalidatePath("/admin/subscriptions");
   return { ok: true };
 }
