@@ -6,10 +6,17 @@ export default async function CustomersPage() {
   const supabase = await createClient();
   const botUsername = process.env.TELEGRAM_BOT_USERNAME;
 
-  const { data: customers, error } = await supabase
-    .from("customers")
-    .select("id, name, telegram_chat_id, link_token, is_active, created_at")
-    .order("id");
+  const [customers, categories, customerCategories] = await Promise.all([
+    supabase
+      .from("customers")
+      .select("id, name, telegram_chat_id, link_token, is_active, created_at")
+      .order("id"),
+    supabase.from("categories").select("id, name").order("name"),
+    supabase.from("customer_categories").select("customer_id, category_id"),
+  ]);
+
+  const categoryList = categories.data ?? [];
+  const links = customerCategories.data ?? [];
 
   return (
     <div>
@@ -17,11 +24,12 @@ export default async function CustomersPage() {
         Müşteriler
       </h1>
       <p className="mt-1 text-sm text-zinc-500">
-        Sisteme kayıtlı tüm müşteriler ve Telegram bağlantı durumları.
+        Sisteme kayıtlı tüm müşteriler, Telegram bağlantı durumları ve ilgilendikleri
+        kategoriler.
       </p>
 
-      {error && (
-        <p className="mt-6 text-sm text-red-600">Müşteriler alınamadı.</p>
+      {(customers.error || categories.error || customerCategories.error) && (
+        <p className="mt-6 text-sm text-red-600">Veriler alınamadı.</p>
       )}
 
       <form action={addCustomer} className="mt-6 flex gap-3">
@@ -39,20 +47,21 @@ export default async function CustomersPage() {
         </button>
       </form>
 
-      <div className="mt-6 overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="mt-6 overflow-x-auto rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-800">
             <tr>
               <th className="px-4 py-3 font-medium">Ad</th>
               <th className="px-4 py-3 font-medium">Telegram</th>
               <th className="px-4 py-3 font-medium">Durum</th>
+              <th className="px-4 py-3 font-medium">Kategoriler</th>
               <th className="px-4 py-3 font-medium">Eklenme</th>
               <th className="px-4 py-3 font-medium">Bağlama</th>
               <th className="px-4 py-3 font-medium">İşlemler</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
-            {customers?.map((customer) => (
+            {customers.data?.map((customer) => (
               <CustomerRow
                 key={customer.id}
                 customer={{
@@ -67,11 +76,15 @@ export default async function CustomersPage() {
                     ? `https://t.me/${botUsername}?start=${customer.link_token}`
                     : null
                 }
+                categories={categoryList}
+                selectedCategoryIds={links
+                  .filter((l) => l.customer_id === customer.id)
+                  .map((l) => l.category_id)}
               />
             ))}
-            {customers?.length === 0 && (
+            {customers.data?.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-center text-zinc-500">
+                <td colSpan={7} className="px-4 py-6 text-center text-zinc-500">
                   Henüz müşteri yok.
                 </td>
               </tr>

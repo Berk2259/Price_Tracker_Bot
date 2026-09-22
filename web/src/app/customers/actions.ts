@@ -23,7 +23,12 @@ export async function deleteCustomer(id: number) {
 
 export async function updateCustomer(
   id: number,
-  input: { name: string; telegramChatId: string; isActive: boolean },
+  input: {
+    name: string;
+    telegramChatId: string;
+    isActive: boolean;
+    categoryIds: number[];
+  },
 ): Promise<{ ok: boolean; message?: string }> {
   const name = input.name.trim();
   const chatIdRaw = input.telegramChatId.trim();
@@ -51,6 +56,29 @@ export async function updateCustomer(
       ok: false,
       message: "Kaydedilemedi. Bu Telegram hesabı başka bir müşteriye bağlı olabilir.",
     };
+  }
+
+  // Kategori seçimini eşitle: kaldırılanları sil, eklenenleri ekle
+  const { data: current } = await supabase
+    .from("customer_categories")
+    .select("category_id")
+    .eq("customer_id", id);
+
+  const currentIds = (current ?? []).map((row) => row.category_id);
+  const toAdd = input.categoryIds.filter((c) => !currentIds.includes(c));
+  const toRemove = currentIds.filter((c) => !input.categoryIds.includes(c));
+
+  if (toRemove.length > 0) {
+    await supabase
+      .from("customer_categories")
+      .delete()
+      .eq("customer_id", id)
+      .in("category_id", toRemove);
+  }
+  if (toAdd.length > 0) {
+    await supabase
+      .from("customer_categories")
+      .insert(toAdd.map((category_id) => ({ customer_id: id, category_id })));
   }
 
   revalidatePath("/customers");
