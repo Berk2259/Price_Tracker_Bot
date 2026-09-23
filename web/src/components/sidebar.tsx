@@ -36,11 +36,10 @@ export function Sidebar({ email }: { email: string | undefined }) {
             <Link
               key={item.href}
               href={item.href}
-              className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                active
+              className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${active
                   ? "bg-emerald-600 text-white"
                   : "hover:bg-zinc-800 hover:text-white"
-              }`}
+                }`}
             >
               {item.label}
             </Link>
@@ -50,7 +49,7 @@ export function Sidebar({ email }: { email: string | undefined }) {
 
       <div className="border-t border-zinc-800 p-4">
         <p className="mb-3 truncate text-xs text-zinc-500">{email}</p>
-        <LogoutButton />
+        <LogoutButton className="w-full" />
       </div>
     </aside>
   );
