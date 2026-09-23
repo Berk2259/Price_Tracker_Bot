@@ -15,7 +15,7 @@ Price_Tracker_Bot/
 │   ├── requirements.txt
 │   └── .env           Gizli anahtarlar (GitHub'a gitmez)
 ├── web/
-│   ├── src/app/           Sayfalar (giriş, ana sayfa, müşteriler, kategoriler, kaynaklar, ürünler, takipler, fiyat geçmişi, bildirimler)
+│   ├── src/app/admin/     Admin sayfaları (giriş, müşteriler, kategoriler, kaynaklar, ürünler, takipler, fiyat geçmişi, bildirimler)
 │   ├── src/lib/supabase/  Supabase bağlantıları (tarayıcı ve sunucu)
 │   ├── src/proxy.ts       Giriş koruması
 │   ├── src/components/    Ortak bileşenler (yan menü, butonlar)
@@ -56,6 +56,9 @@ bakar.
 Kontrol aralığı en az 5 dakikadır. Bir ürünün linki değiştirilirse eski fiyat
 sıfırlanır, böylece bot yeni sayfadaki fiyatı eski ürünle kıyaslayıp yanlış
 bildirim göndermez.
+
+Admin panel `/admin` altındadır (`/admin/login` hariç, girişsiz erişilemez). Kök
+adres (`/`) ileride herkese açık bir tanıtım sayfası (landing page) olacaktır.
 
 ### Bildirim kuralları
 
@@ -201,3 +204,5 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Panel: fiyat geçmişi (listeleme, ürüne göre filtreleme, kayıt silme)
 - [x] Panel: bildirim kayıtları (listeleme, müşteriye göre filtreleme, kayıt silme)
 - [x] Panel: müşteriye kategori atama (Market, E-ticaret, Uçak bileti vb.)
+- [x] Panel: admin sayfaları `/admin` altına taşındı, kök adres genel kullanım için ayrıldı
+- [x] Veritabanı: müşteri hesabı bağlantısı (`auth_user_id`), plan alanı, `leads` ve `customer_requests` tabloları
