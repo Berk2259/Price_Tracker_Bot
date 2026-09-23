@@ -89,6 +89,14 @@ kurallar `is_admin()` fonksiyonuna bağlıdır; bu fonksiyon yalnızca admin
 hesabının kimliğini (UID) kabul eder. Başka bir hesap açılsa bile hiçbir veri
 görülemez. Bot ise `service_role` ile çalışır ve bu kuralları atlar.
 
+### Talep ve hesap açma akışı
+
+Ziyaretçi landing page'deki formu doldurup talep gönderir (`leads` tablosu).
+Admin, Talepler sayfasından talebi inceler ve uygun bulursa e-posta/şifre
+belirleyip hesap açar. Bu işlem Supabase Auth'ta yeni bir kullanıcı, ardından
+`customers` tablosunda o kullanıcıya bağlı bir müşteri kaydı oluşturur ve
+talebi otomatik "Tamamlandı" yapar.
+
 
 ## Kurulum
 
@@ -144,12 +152,17 @@ Yeni bir terminal açıldığında önce sanal ortam tekrar etkinleştirilir
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 TELEGRAM_BOT_USERNAME=
+SUPABASE_SERVICE_ROLE_KEY=
 ```
 `TELEGRAM_BOT_USERNAME`, müşteri bağlama linkini oluşturmak için botun
 kullanıcı adıdır (başında `@` olmadan).
 
 Panelde yalnızca `sb_publishable_` ile başlayan anahtar kullanılır.
 Service role anahtarı panele asla konmaz.
+
+`SUPABASE_SERVICE_ROLE_KEY` sadece hesap açma işleminde, sunucu tarafında
+(`"use server"` dosyasında) kullanılır ve tarayıcıya asla gönderilmez.
+`NEXT_PUBLIC_` öneki almadığından client koduna erişilemez.
 
 2. Paketleri kur ve çalıştır:
 
@@ -209,3 +222,4 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Veritabanı: müşteri hesabı bağlantısı (`auth_user_id`), plan alanı, `leads` ve `customer_requests` tabloları
 - [x] Landing page: tanıtım, plan karşılaştırması ve talep formu (leads tablosuna kaydediyor)
 - [x] Panel: Talepler sayfası (leads listeleme, durum değiştirme, silme)
+- [x] Panel: talepten müşteri hesabı açma (Supabase Auth + customers kaydı)
