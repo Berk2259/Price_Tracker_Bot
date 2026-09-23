@@ -1,9 +1,12 @@
+import asyncio
 import os
 from dotenv import load_dotenv
 from supabase import create_client
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from postgrest.exceptions import APIError
+
+from checker import run_check_cycle
 
 load_dotenv()
 
@@ -56,8 +59,29 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(f"Merhaba {customer['name']}, hesabınız bağlandı ✅")
 
 
+CHECK_LOOP_SECONDS = 60
+
+
+async def check_loop():
+    while True:
+        try:
+            await asyncio.to_thread(run_check_cycle)
+        except Exception as e:
+            print(f"[HATA] Kontrol döngüsü: {e}")
+        await asyncio.sleep(CHECK_LOOP_SECONDS)
+
+
+async def on_startup(app):
+    asyncio.create_task(check_loop())
+
+
 def main():
-    app = Application.builder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
+    app = (
+        Application.builder()
+        .token(os.getenv("TELEGRAM_BOT_TOKEN"))
+        .post_init(on_startup)
+        .build()
+    )
     app.add_handler(CommandHandler("start", start))
     app.run_polling()
 

@@ -20,6 +20,19 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def is_due(product: dict) -> bool:
+    """Ürünün kontrol zamanı geldi mi?"""
+    if product.get("force_check_requested"):
+        return True
+
+    last = product["last_checked_at"]
+    if last is None:
+        return True
+    elapsed = (datetime.now(timezone.utc) - datetime.fromisoformat(last)).total_seconds() / 60
+    # 1 dakika tolerans: zamanlayıcı birkaç saniye erken çalışırsa tur atlanmasın
+    return elapsed >= product["check_interval_minutes"] - 1
+
+
 def check_product(product: dict):
     """Fiyat değiştiyse (product, eski, yeni) döndürür, yoksa None."""
     try:
@@ -27,7 +40,13 @@ def check_product(product: dict):
     except Exception as e:
         (
             supabase.table("products")
-            .update({"last_checked_at": now_iso(), "last_status": f"hata: {e}"[:200]})
+            .update(
+                {
+                    "last_checked_at": now_iso(),
+                    "last_status": f"hata: {e}"[:200],
+                    "force_check_requested": False,
+                }
+            )
             .eq("id", product["id"])
             .execute()
         )
@@ -51,6 +70,7 @@ def check_product(product: dict):
                 "currency": result.currency,
                 "last_checked_at": now_iso(),
                 "last_status": "ok",
+                "force_check_requested": False,
             }
         )
         .eq("id", product["id"])
@@ -65,24 +85,22 @@ def check_product(product: dict):
         return None
     return (product, float(old_price), result.price)
 
-def is_due(product: dict) -> bool:
-    """Ürünün kontrol zamanı geldi mi?"""
-    last = product["last_checked_at"]
-    if last is None:
-        return True
-    elapsed = (datetime.now(timezone.utc) - datetime.fromisoformat(last)).total_seconds() / 60
-    # 1 dakika tolerans: zamanlayıcı birkaç saniye erken çalışırsa tur atlanmasın
-    return elapsed >= product["check_interval_minutes"] - 1
 
-def main() -> None:
+def run_check_cycle() -> None:
     products = (
         supabase.table("products")
-        .select("id, name, url, current_price, last_checked_at, check_interval_minutes")
+        .select(
+            "id, name, url, current_price, last_checked_at, check_interval_minutes, force_check_requested"
+        )
         .eq("is_active", True)
         .execute()
         .data
     )
     products = [p for p in products if is_due(p)]
+    if not products:
+        print("Kontrol edilecek ürün yok")
+        return
+
     print(f"{len(products)} ürünün kontrol zamanı geldi")
 
     changes = []
@@ -97,4 +115,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    run_check_cycle()

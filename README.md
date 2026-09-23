@@ -170,9 +170,7 @@ python main.py
 
 Fiyatları kontrol etmek için (Telegram botundan bağımsız çalışır):
 
-```powershell
-python checker.py
-```
+`python main.py` çalıştığı sürece bot hem Telegram'ı dinler hem arka planda her dakika hangi ürünlerin kontrol zamanı geldiğine bakar, ayrı bir komut gerekmez. `python checker.py`'yi elle bir kez çalıştırmak (tek seferlik test için) hâlâ mümkündür.
 
 Yeni bir terminal açıldığında önce sanal ortam tekrar etkinleştirilir
 (`.venv\Scripts\Activate.ps1`).
@@ -261,3 +259,5 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Müşteri portalı: yeni talep gönderme (kategori + ürün seçimi) ve kendi taleplerini görme
 - [x] Panel: Müşteri talepleri sayfası, Tamamlandı'da otomatik takip ekleme
 - [x] Ücretsiz plan sınırı (1 kategori, 3 ürün), müşteri talep gönderirken kontrol ediliyor
+- [x] Bot: Telegram hesabı başka müşteriye bağlıysa anlaşılır hata mesajı (çökmüyor)
+- [x] Bot sürekli çalışır: Telegram dinleme ve fiyat kontrolü tek süreçte (60 saniyede bir kontrol turu)
