@@ -15,9 +15,9 @@ Price_Tracker_Bot/
 │   ├── requirements.txt
 │   └── .env           Gizli anahtarlar (GitHub'a gitmez)
 ├── web/
-│   ├── src/app/admin/     Admin sayfaları (giriş, talepler, müşteriler, kategoriler, kaynaklar, ürünler, takipler, fiyat geçmişi, bildirimler)
+│   ├── src/app/admin/     Admin sayfaları (giriş, talepler, müşteri talepleri, müşteriler, kategoriler, kaynaklar, ürünler, takipler, fiyat geçmişi, bildirimler)
 │   ├── src/app/login/     Tek giriş sayfası (admin ve müşteri için)
-│   ├── src/app/portal/    Müşteri portalı (kendi ürünleri ve fiyatları, salt okunur)
+│   ├── src/app/portal/    Müşteri portalı (ürünlerim, yeni talep gönderme)
 │   ├── src/app/page.tsx   Herkese açık tanıtım sayfası (landing page)
 │   ├── src/lib/supabase/  Supabase bağlantıları (tarayıcı ve sunucu)
 │   ├── src/proxy.ts       Giriş koruması
@@ -112,6 +112,16 @@ sadece kendi takip ettiği ürünleri, güncel fiyatlarını, hedef fiyatların�
 bildirim kuralını görür (salt okunur). Bu erişim veritabanı kurallarıyla
 (RLS) sağlanır: müşteri sadece kendi `customers`, `subscriptions` ve ona bağlı
 `products` satırlarını okuyabilir.
+
+### Müşteri talebi ve otomatik takip
+
+Müşteri portaldan bir kategori ve o kategorideki ürünleri seçip talep
+gönderir (`customer_requests` + `customer_request_products`). Admin, panelin
+**Müşteri talepleri** sayfasından bu talepleri görür ve durumunu değiştirir
+(Bekliyor / İnceleniyor / Tamamlandı / Reddedildi). Durum **Tamamlandı**
+yapıldığında seçilen ürünler otomatik olarak müşterinin takiplerine
+(`subscriptions`) eklenir; hedef fiyat ve bildirim kuralı boş kalır, admin
+bunu Takipler sayfasından ayarlar.
 
 ## Kurulum
 
@@ -240,3 +250,5 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Panel: talepten müşteri hesabı açma (Supabase Auth + customers kaydı)
 - [x] Tek giriş sayfası (/login), hesap türüne göre /admin veya /portal'a yönlendirme
 - [x] Müşteri portalı: giriş, takip edilen ürünler ve fiyatları görme
+- [x] Müşteri portalı: yeni talep gönderme (kategori + ürün seçimi) ve kendi taleplerini görme
+- [x] Panel: Müşteri talepleri sayfası, Tamamlandı'da otomatik takip ekleme

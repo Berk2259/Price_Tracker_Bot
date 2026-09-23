@@ -7,6 +7,7 @@ import { LogoutButton } from "@/components/logout-button";
 const items = [
   { href: "/admin", label: "Ana sayfa" },
   { href: "/admin/leads", label: "Talepler" },
+  { href: "/admin/customer-requests", label: "Müşteri talepleri" },
   { href: "/admin/customers", label: "Müşteriler" },
   { href: "/admin/categories", label: "Kategoriler" },
   { href: "/admin/sources", label: "Kaynaklar" },
@@ -37,8 +38,8 @@ export function Sidebar({ email }: { email: string | undefined }) {
               key={item.href}
               href={item.href}
               className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${active
-                  ? "bg-emerald-600 text-white"
-                  : "hover:bg-zinc-800 hover:text-white"
+                ? "bg-emerald-600 text-white"
+                : "hover:bg-zinc-800 hover:text-white"
                 }`}
             >
               {item.label}
