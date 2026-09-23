@@ -121,3 +121,18 @@ export async function deleteProduct(id: number): Promise<Result> {
   revalidatePath("/admin/products");
   return { ok: true };
 }
+
+export async function requestImmediateCheck(id: number): Promise<Result> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("products")
+    .update({ force_check_requested: true })
+    .eq("id", id);
+
+  if (error) {
+    return { ok: false, message: "İstek gönderilemedi." };
+  }
+
+  revalidatePath("/admin/products");
+  return { ok: true };
+}

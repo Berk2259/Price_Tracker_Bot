@@ -131,6 +131,13 @@ sınır aşılıyorsa talep reddedilir ve mevcut kullanım anlaşılır bir mesa
 gösterilir. Sınırlar `web/src/lib/plan-limits.ts` dosyasında tanımlıdır.
 Admin, Takipler sayfasından bu sınırın üstünde elle ekleme yapabilir.
 
+### Şimdi kontrol et
+
+Admin, Ürünler sayfasından bir ürüne "Şimdi kontrol et" diyebilir. Bu, ürünün
+`force_check_requested` bayrağını işaretler. Bot en fazla 1 dakika içinde bu
+bayrağı görüp ürünü hemen kontrol eder ve bayrağı sıfırlar; ürünün kendi
+kontrol aralığını beklemesine gerek kalmaz.
+
 ## Kurulum
 
 ### Ön koşullar
@@ -261,3 +268,4 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Ücretsiz plan sınırı (1 kategori, 3 ürün), müşteri talep gönderirken kontrol ediliyor
 - [x] Bot: Telegram hesabı başka müşteriye bağlıysa anlaşılır hata mesajı (çökmüyor)
 - [x] Bot sürekli çalışır: Telegram dinleme ve fiyat kontrolü tek süreçte (60 saniyede bir kontrol turu)
+- [x] Panel: "Şimdi kontrol et" düğmesi, bot en fazla 1 dakika içinde işliyor

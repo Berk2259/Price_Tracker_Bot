@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { deleteProduct, updateProduct } from "@/app/admin/products/actions";
+import {
+  deleteProduct,
+  requestImmediateCheck,
+  updateProduct,
+} from "@/app/admin/products/actions";
+
 
 type Option = { id: number; name: string };
 
@@ -17,6 +22,7 @@ type Product = {
   last_checked_at: string | null;
   last_status: string | null;
   is_active: boolean;
+  force_check_requested: boolean;
 };
 
 const inputClass =
@@ -95,6 +101,15 @@ export function ProductRow({
     });
   }
 
+  function checkNow() {
+    startTransition(async () => {
+      const result = await requestImmediateCheck(product.id);
+      if (!result.ok) {
+        setMessage(result.message ?? "İstek gönderilemedi.");
+      }
+    });
+  }
+
   const categoryName =
     categories.find((c) => c.id === product.category_id)?.name ?? "-";
   const sourceName = sources.find((s) => s.id === product.source_id)?.name ?? "-";
@@ -102,16 +117,16 @@ export function ProductRow({
   const price =
     product.current_price !== null
       ? `${Number(product.current_price).toLocaleString("tr-TR", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })} ${product.currency}`
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })} ${product.currency}`
       : "-";
 
   const lastChecked = product.last_checked_at
     ? new Date(product.last_checked_at).toLocaleString("tr-TR", {
-        dateStyle: "short",
-        timeStyle: "short",
-      })
+      dateStyle: "short",
+      timeStyle: "short",
+    })
     : "Henüz kontrol edilmedi";
 
   const hasError = product.last_status && product.last_status !== "ok";
@@ -245,7 +260,21 @@ export function ProductRow({
         )}
       </td>
       <td className="px-4 py-3">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          {product.force_check_requested ? (
+            <span className="rounded-lg border border-amber-300 px-3 py-1 text-xs text-amber-600 dark:border-amber-800 dark:text-amber-500">
+              Kontrol bekleniyor...
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={checkNow}
+              disabled={pending}
+              className={smallButton}
+            >
+              Şimdi kontrol et
+            </button>
+          )}
           <button
             type="button"
             onClick={startEdit}
