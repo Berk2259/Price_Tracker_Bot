@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from supabase import create_client
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
+from postgrest.exceptions import APIError
 
 load_dotenv()
 
@@ -33,12 +34,25 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     customer = result.data[0]
-    (
-        supabase.table("customers")
-        .update({"telegram_chat_id": chat_id})
-        .eq("id", customer["id"])
-        .execute()
-    )
+    try:
+        (
+            supabase.table("customers")
+            .update({"telegram_chat_id": chat_id})
+            .eq("id", customer["id"])
+            .execute()
+        )
+    except APIError as e:
+        if e.code == "23505":
+            await update.message.reply_text(
+                "Bu Telegram hesabı zaten başka bir müşteriye bağlı. "
+                "Yardım için yöneticinizle iletişime geçin."
+            )
+        else:
+            await update.message.reply_text(
+                "Bir hata oluştu, lütfen daha sonra tekrar deneyin."
+            )
+        return
+
     await update.message.reply_text(f"Merhaba {customer['name']}, hesabınız bağlandı ✅")
 
 
