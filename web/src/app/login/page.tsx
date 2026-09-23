@@ -17,18 +17,24 @@ export default function LoginPage() {
     setError(null);
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) {
+    if (error || !data.user) {
       setError("E-posta veya şifre hatalı.");
       setLoading(false);
       return;
     }
 
-    router.push("/admin");
+    const { data: customer } = await supabase
+      .from("customers")
+      .select("id")
+      .eq("auth_user_id", data.user.id)
+      .maybeSingle();
+
+    router.push(customer ? "/portal" : "/admin");
     router.refresh();
   }
 
@@ -42,7 +48,7 @@ export default function LoginPage() {
           <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
             Fiyat Takip Botu
           </h1>
-          <p className="mt-1 text-sm text-zinc-500">Yönetim paneli girişi</p>
+          <p className="mt-1 text-sm text-zinc-500">Giriş yap</p>
         </div>
 
         <div className="space-y-1.5">
@@ -86,7 +92,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          className="w-full rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
         >
           {loading ? "Giriş yapılıyor..." : "Giriş yap"}
         </button>

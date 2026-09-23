@@ -16,6 +16,7 @@ Price_Tracker_Bot/
 │   └── .env           Gizli anahtarlar (GitHub'a gitmez)
 ├── web/
 │   ├── src/app/admin/     Admin sayfaları (giriş, talepler, müşteriler, kategoriler, kaynaklar, ürünler, takipler, fiyat geçmişi, bildirimler)
+│   ├── src/app/login/     Tek giriş sayfası (admin ve müşteri için)
 │   ├── src/app/page.tsx   Herkese açık tanıtım sayfası (landing page)
 │   ├── src/lib/supabase/  Supabase bağlantıları (tarayıcı ve sunucu)
 │   ├── src/proxy.ts       Giriş koruması
@@ -89,6 +90,12 @@ kurallar `is_admin()` fonksiyonuna bağlıdır; bu fonksiyon yalnızca admin
 hesabının kimliğini (UID) kabul eder. Başka bir hesap açılsa bile hiçbir veri
 görülemez. Bot ise `service_role` ile çalışır ve bu kuralları atlar.
 
+Giriş tek bir sayfadan (`/login`) yapılır. Giriş başarılı olunca sistem bu
+hesabın `customers` tablosunda bir kaydı olup olmadığına bakar: varsa
+müşteri portalına (`/portal`), yoksa admin panele (`/admin`) yönlendirir.
+Her istekte bu kontrol tekrar yapılır, yani bir müşteri adres çubuğuna elle
+`/admin` yazsa da otomatik olarak `/portal`'a geri gönderilir (ve tersi).
+
 ### Talep ve hesap açma akışı
 
 Ziyaretçi landing page'deki formu doldurup talep gönderir (`leads` tablosu).
@@ -96,6 +103,8 @@ Admin, Talepler sayfasından talebi inceler ve uygun bulursa e-posta/şifre
 belirleyip hesap açar. Bu işlem Supabase Auth'ta yeni bir kullanıcı, ardından
 `customers` tablosunda o kullanıcıya bağlı bir müşteri kaydı oluşturur ve
 talebi otomatik "Tamamlandı" yapar.
+
+
 
 
 ## Kurulum
@@ -223,3 +232,4 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Landing page: tanıtım, plan karşılaştırması ve talep formu (leads tablosuna kaydediyor)
 - [x] Panel: Talepler sayfası (leads listeleme, durum değiştirme, silme)
 - [x] Panel: talepten müşteri hesabı açma (Supabase Auth + customers kaydı)
+- [x] Tek giriş sayfası (/login), hesap türüne göre /admin veya /portal'a yönlendirme

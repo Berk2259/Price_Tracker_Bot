@@ -31,18 +31,39 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
   const isAdminRoute = pathname.startsWith("/admin");
-  const isAdminLogin = pathname === "/admin/login";
+  const isPortalRoute = pathname.startsWith("/portal");
+  const isLoginPage = pathname === "/login";
 
-  if (isAdminRoute && !isAdminLogin && !user) {
+  if ((isAdminRoute || isPortalRoute) && !user) {
     const url = request.nextUrl.clone();
-    url.pathname = "/admin/login";
+    url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  if (isAdminLogin && user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/admin";
-    return NextResponse.redirect(url);
+  if (user && (isAdminRoute || isPortalRoute || isLoginPage)) {
+    const { data: customer } = await supabase
+      .from("customers")
+      .select("id")
+      .eq("auth_user_id", user.id)
+      .maybeSingle();
+
+    const isCustomer = Boolean(customer);
+
+    if (isLoginPage) {
+      const url = request.nextUrl.clone();
+      url.pathname = isCustomer ? "/portal" : "/admin";
+      return NextResponse.redirect(url);
+    }
+    if (isAdminRoute && isCustomer) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/portal";
+      return NextResponse.redirect(url);
+    }
+    if (isPortalRoute && !isCustomer) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin";
+      return NextResponse.redirect(url);
+    }
   }
 
   return response;
