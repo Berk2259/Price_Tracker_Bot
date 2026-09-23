@@ -15,7 +15,7 @@ Price_Tracker_Bot/
 │   ├── requirements.txt
 │   └── .env           Gizli anahtarlar (GitHub'a gitmez)
 ├── web/
-│   ├── src/app/admin/     Admin sayfaları (giriş, müşteriler, kategoriler, kaynaklar, ürünler, takipler, fiyat geçmişi, bildirimler)
+│   ├── src/app/admin/     Admin sayfaları (giriş, talepler, müşteriler, kategoriler, kaynaklar, ürünler, takipler, fiyat geçmişi, bildirimler)
 │   ├── src/app/page.tsx   Herkese açık tanıtım sayfası (landing page)
 │   ├── src/lib/supabase/  Supabase bağlantıları (tarayıcı ve sunucu)
 │   ├── src/proxy.ts       Giriş koruması
@@ -208,3 +208,4 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Panel: admin sayfaları `/admin` altına taşındı, kök adres genel kullanım için ayrıldı
 - [x] Veritabanı: müşteri hesabı bağlantısı (`auth_user_id`), plan alanı, `leads` ve `customer_requests` tabloları
 - [x] Landing page: tanıtım, plan karşılaştırması ve talep formu (leads tablosuna kaydediyor)
+- [x] Panel: Talepler sayfası (leads listeleme, durum değiştirme, silme)
