@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { PLAN_LIMITS, type Plan } from "@/lib/plan-limits";
 
 type Result = { ok: boolean; message?: string };
 
@@ -30,6 +31,44 @@ export async function submitCustomerRequest(input: {
 
   if (!customer) {
     return { ok: false, message: "Müşteri kaydınız bulunamadı." };
+  }
+  const { data: customerWithPlan } = await supabase
+    .from("customers")
+    .select("plan")
+    .eq("id", customer.id)
+    .single();
+
+  const plan = (customerWithPlan?.plan ?? "free") as Plan;
+  const limits = PLAN_LIMITS[plan] ?? PLAN_LIMITS.free;
+
+  const { data: existingSubs } = await supabase
+    .from("subscriptions")
+    .select("product_id, products(category_id)")
+    .eq("customer_id", customer.id);
+
+  const existingProductIds = new Set(
+    (existingSubs ?? []).map((s) => s.product_id),
+  );
+  const existingCategoryIds = new Set(
+    (existingSubs ?? [])
+      .map((s) => {
+        const product = Array.isArray(s.products) ? s.products[0] : s.products;
+        return product?.category_id;
+      })
+      .filter((id): id is number => typeof id === "number"),
+  );
+
+  const newProductIds = new Set([...existingProductIds, ...input.productIds]);
+  const newCategoryIds = new Set([...existingCategoryIds, input.categoryId]);
+
+  if (
+    newCategoryIds.size > limits.maxCategories ||
+    newProductIds.size > limits.maxProducts
+  ) {
+    return {
+      ok: false,
+      message: `Ücretsiz planda en fazla ${limits.maxCategories} kategori ve ${limits.maxProducts} ürün takip edilebilir. Şu an ${existingCategoryIds.size} kategori, ${existingProductIds.size} ürün takip ediyorsunuz.`,
+    };
   }
 
   const { data: request, error: requestError } = await supabase

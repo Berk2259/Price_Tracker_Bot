@@ -123,6 +123,14 @@ yapıldığında seçilen ürünler otomatik olarak müşterinin takiplerine
 (`subscriptions`) eklenir; hedef fiyat ve bildirim kuralı boş kalır, admin
 bunu Takipler sayfasından ayarlar.
 
+### Plan sınırları
+
+Ücretsiz planda en fazla 1 kategori ve 3 ürün takip edilebilir (premium'da
+sınır yok). Bu sınır, müşteri portaldan yeni talep gönderirken kontrol edilir;
+sınır aşılıyorsa talep reddedilir ve mevcut kullanım anlaşılır bir mesajla
+gösterilir. Sınırlar `web/src/lib/plan-limits.ts` dosyasında tanımlıdır.
+Admin, Takipler sayfasından bu sınırın üstünde elle ekleme yapabilir.
+
 ## Kurulum
 
 ### Ön koşullar
@@ -252,3 +260,4 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Müşteri portalı: giriş, takip edilen ürünler ve fiyatları görme
 - [x] Müşteri portalı: yeni talep gönderme (kategori + ürün seçimi) ve kendi taleplerini görme
 - [x] Panel: Müşteri talepleri sayfası, Tamamlandı'da otomatik takip ekleme
+- [x] Ücretsiz plan sınırı (1 kategori, 3 ürün), müşteri talep gönderirken kontrol ediliyor
