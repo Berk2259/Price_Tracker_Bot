@@ -195,7 +195,6 @@ pip install -r requirements.txt
 python main.py
 ```
 
-
 `python main.py` çalıştığı sürece bot hem Telegram'ı dinler hem arka planda her dakika hangi ürünlerin kontrol zamanı geldiğine bakar, ayrı bir komut gerekmez. `python checker.py`'yi elle bir kez çalıştırmak (tek seferlik test için) hâlâ mümkündür.
 
 Yeni bir terminal açıldığında önce sanal ortam tekrar etkinleştirilir
