@@ -21,7 +21,8 @@ Price_Tracker_Bot/
 │   ├── src/app/page.tsx   Herkese açık tanıtım sayfası (landing page)
 │   ├── src/lib/supabase/  Supabase bağlantıları (tarayıcı ve sunucu)
 │   ├── src/proxy.ts       Giriş koruması
-│   ├── src/components/    Ortak bileşenler (yan menü, butonlar)
+│   ├── src/components/    Ortak bileşenler (yan menü, butonlar, talep formu)
+│   ├── src/components/landing/  Landing page bölümleri (hero, 3 adımda hazır, kategoriler, SSS, planlar, talep)
 │   └── .env.local         Panel ayarları (GitHub'a gitmez)
 └── supabase/          Veritabanı şema dosyaları (SQL)
 ```
@@ -61,7 +62,7 @@ sıfırlanır, böylece bot yeni sayfadaki fiyatı eski ürünle kıyaslayıp ya
 bildirim göndermez.
 
 Admin panel `/admin` altındadır (`/admin/login` hariç, girişsiz erişilemez). Kök
-adres (`/`) ileride herkese açık bir tanıtım sayfası (landing page) olacaktır.
+adres (`/`) herkese açık tanıtım sayfasıdır (landing page).
 
 ### Bildirim kuralları
 
@@ -138,6 +139,25 @@ Admin, Ürünler sayfasından bir ürüne "Şimdi kontrol et" diyebilir. Bu, ür
 bayrağı görüp ürünü hemen kontrol eder ve bayrağı sıfırlar; ürünün kendi
 kontrol aralığını beklemesine gerek kalmaz.
 
+### Landing page tasarımı
+
+Kök sayfa (`/`) bölümlere ayrılmıştır ve her bölüm `web/src/components/landing/`
+altında ayrı bir dosyadır: hero (cihaz sahnesi ve kayan ürün duvarı), 3 adımda
+hazır, kategoriler, Merak edilenler (bot sohbeti şeklinde), planlar ve talep
+formu. Talep formu `web/src/components/lead-form.tsx` dosyasındadır ve
+`leads` tablosuna kaydeder.
+
+Renkler `globals.css` içindeki `@theme` bloğunda tanımlıdır. Animasyonlar
+saf CSS ile yazılmıştır ve bölüme göre önek alır: `hv-` (hero), `hiw-` (3 adımda
+hazır), `pl-` (planlar), `pf-` (SSS sohbeti), `lf-` (talep formu). Kaydırınca
+başlayan animasyonlar küçük bir `IntersectionObserver` ile tetiklenir, ayarlarda
+"hareketi azalt" seçiliyse tüm animasyonlar kapanır (`prefers-reduced-motion`).
+
+Hero'daki cihaz ekranlarında görünen ürünler ve fiyatlar örnek veridir, gerçek
+takip verisi değildir. Premium planda görünen "Alternatiflerle fiyat kıyaslama"
+ile "Haftalık ve aylık rapor ve analiz" henüz yapılmamıştır, bu yüzden
+"Yakında" etiketiyle gösterilir.
+
 ## Kurulum
 
 ### Ön koşullar
@@ -175,7 +195,6 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Fiyatları kontrol etmek için (Telegram botundan bağımsız çalışır):
 
 `python main.py` çalıştığı sürece bot hem Telegram'ı dinler hem arka planda her dakika hangi ürünlerin kontrol zamanı geldiğine bakar, ayrı bir komut gerekmez. `python checker.py`'yi elle bir kez çalıştırmak (tek seferlik test için) hâlâ mümkündür.
 
@@ -269,3 +288,4 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Bot: Telegram hesabı başka müşteriye bağlıysa anlaşılır hata mesajı (çökmüyor)
 - [x] Bot sürekli çalışır: Telegram dinleme ve fiyat kontrolü tek süreçte (60 saniyede bir kontrol turu)
 - [x] Panel: "Şimdi kontrol et" düğmesi, bot en fazla 1 dakika içinde işliyor
+- [x] Landing page yenilendi: animasyonlu hero, 3 adımda hazır, kategoriler, planlar, SSS sohbeti ve talep formu

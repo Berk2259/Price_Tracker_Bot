@@ -24,3 +24,2162 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@theme {
+  /* Landing page renk paleti: Turkuaz */
+  --color-brand: #0d9488;
+  --color-brand-dark: #0f766e;
+  --color-brand-light: #5eead4;
+  --color-ink: #0d2b29;
+  --color-muted: #4c6b68;
+  --color-line: #d4ece9;
+  --color-canvas: #f4fbfa;
+  --color-tint: #e0f5f1;
+  --color-blob-1: #99f6e4;
+  --color-blob-2: #a5f3fc;
+  --color-blob-3: #ccfbf1;
+
+  --shadow-brand: 0 12px 28px rgba(13, 148, 136, 0.35);
+  --shadow-soft: 0 10px 30px rgba(13, 148, 136, 0.08);
+  --shadow-card: 0 26px 60px rgba(13, 148, 136, 0.14);
+  --shadow-phone: 0 30px 70px rgba(13, 148, 136, 0.25);
+  --shadow-strong: 0 26px 60px rgba(13, 43, 41, 0.3);
+}
+
+/* ===== "3 adımda hazır" animasyonları (bkz. components/landing/how-it-works.tsx) ===== */
+
+/* Adım 1: talep formunun küçük kopyası, 8 saniyelik döngü */
+.hiw-form {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  width: 258px;
+  text-align: left;
+}
+
+.hiw-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.hiw-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 25px;
+  padding: 0 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--color-ink);
+  background: #fff;
+  border: 1.5px solid var(--color-line);
+  border-radius: 9px;
+  animation: hiw-focus 8s infinite;
+}
+
+.hiw-textarea {
+  align-items: flex-start;
+  height: 38px;
+  padding-top: 7px;
+}
+
+.hiw-select {
+  justify-content: space-between;
+}
+
+.hiw-select em {
+  font-style: normal;
+  font-size: 8px;
+  color: #7d9a96;
+}
+
+.hiw-f1 {
+  animation-delay: 0.5s;
+}
+
+.hiw-f2 {
+  animation-delay: 1.45s;
+}
+
+.hiw-f3 {
+  animation-delay: 2.7s;
+}
+
+.hiw-f4 {
+  animation-delay: 3.35s;
+}
+
+.hiw-f5 {
+  animation-delay: 4.15s;
+}
+
+.hiw-ph {
+  position: absolute;
+  left: 8px;
+  font-weight: 500;
+  color: #9db3b0;
+}
+
+.hiw-textarea .hiw-ph {
+  top: 7px;
+}
+
+.hiw-ty {
+  display: inline-block;
+  width: 0;
+  height: 12px;
+  overflow: hidden;
+  line-height: 12px;
+  white-space: nowrap;
+  border-right: 1.5px solid transparent;
+}
+
+.hiw-ty-a {
+  animation: hiw-ty-a 8s infinite;
+}
+
+.hiw-ty-b {
+  animation: hiw-ty-b 8s infinite;
+}
+
+.hiw-ty-c {
+  animation: hiw-ty-c 8s infinite;
+}
+
+.hiw-ty-d {
+  animation: hiw-ty-d 8s infinite;
+}
+
+.hiw-ph-a {
+  animation: hiw-ph-a 8s infinite;
+}
+
+.hiw-ph-b {
+  animation: hiw-ph-b 8s infinite;
+}
+
+.hiw-ph-c {
+  animation: hiw-ph-c 8s infinite;
+}
+
+.hiw-ph-d {
+  animation: hiw-ph-d 8s infinite;
+}
+
+@keyframes hiw-focus {
+  0% {
+    border-color: var(--color-line);
+    box-shadow: none;
+  }
+
+  2%,
+  11% {
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.16);
+  }
+
+  14%,
+  100% {
+    border-color: var(--color-line);
+    box-shadow: none;
+  }
+}
+
+@keyframes hiw-ty-a {
+
+  0%,
+  5% {
+    width: 0;
+    border-right-color: transparent;
+  }
+
+  6% {
+    width: 0;
+    border-right-color: var(--color-brand);
+  }
+
+  16% {
+    width: 26px;
+    border-right-color: var(--color-brand);
+  }
+
+  17%,
+  88% {
+    width: 26px;
+    border-right-color: transparent;
+  }
+
+  94%,
+  100% {
+    width: 0;
+    border-right-color: transparent;
+  }
+}
+
+@keyframes hiw-ty-b {
+
+  0%,
+  17% {
+    width: 0;
+    border-right-color: transparent;
+  }
+
+  18% {
+    width: 0;
+    border-right-color: var(--color-brand);
+  }
+
+  32% {
+    width: 68px;
+    border-right-color: var(--color-brand);
+  }
+
+  33%,
+  88% {
+    width: 68px;
+    border-right-color: transparent;
+  }
+
+  94%,
+  100% {
+    width: 0;
+    border-right-color: transparent;
+  }
+}
+
+@keyframes hiw-ty-c {
+
+  0%,
+  41% {
+    width: 0;
+    border-right-color: transparent;
+  }
+
+  42% {
+    width: 0;
+    border-right-color: var(--color-brand);
+  }
+
+  50% {
+    width: 36px;
+    border-right-color: var(--color-brand);
+  }
+
+  51%,
+  88% {
+    width: 36px;
+    border-right-color: transparent;
+  }
+
+  94%,
+  100% {
+    width: 0;
+    border-right-color: transparent;
+  }
+}
+
+@keyframes hiw-ty-d {
+
+  0%,
+  51% {
+    width: 0;
+    border-right-color: transparent;
+  }
+
+  52% {
+    width: 0;
+    border-right-color: var(--color-brand);
+  }
+
+  66% {
+    width: 86px;
+    border-right-color: var(--color-brand);
+  }
+
+  67%,
+  88% {
+    width: 86px;
+    border-right-color: transparent;
+  }
+
+  94%,
+  100% {
+    width: 0;
+    border-right-color: transparent;
+  }
+}
+
+@keyframes hiw-ph-a {
+
+  0%,
+  5% {
+    opacity: 1;
+  }
+
+  6%,
+  90% {
+    opacity: 0;
+  }
+
+  96%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes hiw-ph-b {
+
+  0%,
+  17% {
+    opacity: 1;
+  }
+
+  18%,
+  90% {
+    opacity: 0;
+  }
+
+  96%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes hiw-ph-c {
+
+  0%,
+  41% {
+    opacity: 1;
+  }
+
+  42%,
+  90% {
+    opacity: 0;
+  }
+
+  96%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes hiw-ph-d {
+
+  0%,
+  51% {
+    opacity: 1;
+  }
+
+  52%,
+  90% {
+    opacity: 0;
+  }
+
+  96%,
+  100% {
+    opacity: 1;
+  }
+}
+
+.hiw-send {
+  position: relative;
+  display: block;
+  height: 26px;
+  overflow: hidden;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 26px;
+  color: #fff;
+  text-align: center;
+  background: var(--color-brand);
+  border-radius: 99px;
+  animation: hiw-btn 8s infinite;
+}
+
+.hiw-t1 {
+  display: block;
+  animation: hiw-t1 8s infinite;
+}
+
+.hiw-t2 {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation: hiw-t2 8s infinite;
+}
+
+@keyframes hiw-btn {
+
+  0%,
+  69% {
+    background: var(--color-brand);
+    transform: none;
+  }
+
+  71.5% {
+    transform: scale(0.94);
+  }
+
+  74% {
+    transform: scale(1);
+  }
+
+  75%,
+  92% {
+    background: #16a34a;
+  }
+
+  98%,
+  100% {
+    background: var(--color-brand);
+  }
+}
+
+@keyframes hiw-t1 {
+
+  0%,
+  73% {
+    opacity: 1;
+  }
+
+  75%,
+  93% {
+    opacity: 0;
+  }
+
+  98%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes hiw-t2 {
+
+  0%,
+  73% {
+    opacity: 0;
+  }
+
+  75%,
+  92% {
+    opacity: 1;
+  }
+
+  96%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.hiw-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  width: 14px;
+  height: 14px;
+  opacity: 0;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+  animation: hiw-cursor 8s infinite;
+}
+
+@keyframes hiw-cursor {
+
+  0%,
+  58% {
+    opacity: 0;
+    transform: translate(200px, 70px);
+  }
+
+  61% {
+    opacity: 1;
+    transform: translate(200px, 70px);
+  }
+
+  69% {
+    opacity: 1;
+    transform: translate(132px, 108px);
+  }
+
+  71.5% {
+    opacity: 1;
+    transform: translate(132px, 111px) scale(0.85);
+  }
+
+  74% {
+    opacity: 1;
+    transform: translate(132px, 108px);
+  }
+
+  82% {
+    opacity: 1;
+    transform: translate(140px, 112px);
+  }
+
+  86%,
+  100% {
+    opacity: 0;
+    transform: translate(150px, 116px);
+  }
+}
+
+/* Adım 2: hesap açılır (onay işareti çizilir, hesap kartı belirir) */
+.hiw-stack {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+}
+
+.hiw-ring,
+.hiw-tick {
+  fill: none;
+  stroke: var(--color-brand);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hiw-ring {
+  stroke-width: 3;
+  stroke-dasharray: 140;
+  stroke-dashoffset: 140;
+  animation: hiw-draw 4s infinite;
+}
+
+.hiw-tick {
+  stroke-width: 3.5;
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+  animation: hiw-draw-tick 4s infinite;
+}
+
+@keyframes hiw-draw {
+  0% {
+    stroke-dashoffset: 140;
+  }
+
+  30%,
+  85% {
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    stroke-dashoffset: 140;
+  }
+}
+
+@keyframes hiw-draw-tick {
+
+  0%,
+  25% {
+    stroke-dashoffset: 40;
+  }
+
+  45%,
+  85% {
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    stroke-dashoffset: 40;
+  }
+}
+
+.hiw-account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 13px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-ink);
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(13, 148, 136, 0.16);
+  opacity: 0;
+  animation: hiw-account 4s infinite;
+}
+
+.hiw-account small {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 500;
+  color: var(--color-muted);
+}
+
+.hiw-avatar {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  font-size: 11px;
+  color: #fff;
+  background: var(--color-brand);
+  border-radius: 50%;
+}
+
+@keyframes hiw-account {
+
+  0%,
+  42% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  52% {
+    opacity: 1;
+    transform: none;
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Adım 3: Telegram bildirimi kayarak gelir, zil çalar */
+.hiw-bubble {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-ink);
+  background: #fff;
+  border-radius: 14px 14px 14px 4px;
+  box-shadow: 0 6px 18px rgba(13, 148, 136, 0.18);
+  opacity: 0;
+  animation: hiw-slide 4s infinite;
+}
+
+.hiw-bubble b {
+  color: #16a34a;
+}
+
+.hiw-bell {
+  display: inline-block;
+  transform-origin: 50% 0;
+  animation: hiw-shake 4s infinite;
+}
+
+@keyframes hiw-slide {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.9);
+  }
+
+  12%,
+  85% {
+    opacity: 1;
+    transform: none;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes hiw-shake {
+
+  0%,
+  12% {
+    transform: rotate(0);
+  }
+
+  16% {
+    transform: rotate(20deg);
+  }
+
+  20% {
+    transform: rotate(-18deg);
+  }
+
+  24% {
+    transform: rotate(12deg);
+  }
+
+  28%,
+  100% {
+    transform: rotate(0);
+  }
+}
+
+/* Kullanıcı "hareketi azalt" ayarını açtıysa animasyonlar durur, son hâl gösterilir */
+@media (prefers-reduced-motion: reduce) {
+
+  .hiw-form *,
+  .hiw-form,
+  .hiw-ring,
+  .hiw-tick,
+  .hiw-account,
+  .hiw-bubble,
+  .hiw-bell,
+  .hiw-cursor {
+    animation: none !important;
+  }
+
+  .hiw-ty-a {
+    width: 26px;
+  }
+
+  .hiw-ty-b {
+    width: 68px;
+  }
+
+  .hiw-ty-c {
+    width: 36px;
+  }
+
+  .hiw-ty-d {
+    width: 86px;
+  }
+
+  .hiw-ph {
+    opacity: 0;
+  }
+
+  .hiw-ring,
+  .hiw-tick {
+    stroke-dashoffset: 0;
+  }
+
+  .hiw-account,
+  .hiw-bubble {
+    opacity: 1;
+  }
+
+  .hiw-cursor {
+    display: none;
+  }
+}
+
+/* ===== Hero: cihaz vitrini ve bildirim duvarı (bkz. components/landing/hero*.tsx) ===== */
+/* Ölçek: 1 cm = 16px (MacBook Pro 14", iPad Pro 11" yatay, iPhone x1.2) */
+.hv-lineup {
+  position: relative;
+  flex: none;
+  width: 780px;
+  height: 376px;
+}
+
+.hv-lineup>* {
+  position: absolute;
+}
+
+.hv-floor {
+  left: 3%;
+  right: 3%;
+  bottom: -20px;
+  z-index: 0;
+  height: 46px;
+  background: radial-gradient(ellipse, rgba(45, 212, 191, .42), transparent 70%);
+  filter: blur(14px);
+}
+
+.hv-gloss::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(125deg, rgba(255, 255, 255, .09), transparent 38%);
+}
+
+/* Telegram mesaj balonları (Mac ve iPhone'da ortak) */
+.hv-tb {
+  max-width: 92%;
+  padding: 5px 7px;
+  line-height: 1.35;
+  background: #182533;
+  border: 1px solid #223345;
+  border-radius: 8px 8px 8px 2px;
+  opacity: 0;
+}
+
+.hv-tb b {
+  display: block;
+}
+
+.hv-tb .old {
+  color: #86a0ad;
+}
+
+.hv-tb .new {
+  color: #5eead4;
+  font-weight: 800;
+}
+
+.hv-tb-a {
+  animation: hv-t1 10s infinite;
+}
+
+.hv-tb-b {
+  animation: hv-t2 10s infinite;
+}
+
+.hv-tb-c {
+  animation: hv-t3 10s infinite;
+}
+
+@keyframes hv-t1 {
+
+  0%,
+  4% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  9%,
+  92% {
+    opacity: 1;
+    transform: none;
+  }
+
+  98%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes hv-t2 {
+
+  0%,
+  26% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  31%,
+  92% {
+    opacity: 1;
+    transform: none;
+  }
+
+  98%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes hv-t3 {
+
+  0%,
+  48% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  53%,
+  92% {
+    opacity: 1;
+    transform: none;
+  }
+
+  98%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes hv-banner {
+
+  0%,
+  38% {
+    opacity: 0;
+    transform: translateY(-12px) scale(.96);
+  }
+
+  44%,
+  76% {
+    opacity: 1;
+    transform: none;
+  }
+
+  82%,
+  100% {
+    opacity: 0;
+    transform: translateY(-12px) scale(.96);
+  }
+}
+
+@keyframes hv-flash {
+
+  0%,
+  30% {
+    background: #fff;
+    border-color: #d4ece9;
+  }
+
+  36%,
+  62% {
+    background: #dcfce7;
+    border-color: #86efac;
+  }
+
+  72%,
+  100% {
+    background: #fff;
+    border-color: #d4ece9;
+  }
+}
+
+/* MacBook Pro 14": kapak 500 x 335 */
+.hv-mac {
+  left: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 500px;
+}
+
+.hv-mac-lid {
+  position: relative;
+  height: 335px;
+  padding: 8px 9px 9px;
+  background: #0a0d0d;
+  border-radius: 16px 16px 3px 3px;
+  box-shadow: 0 36px 70px rgba(0, 0, 0, .6), inset 0 0 0 1.5px #2b3835;
+}
+
+.hv-mac-notch {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  z-index: 6;
+  width: 62px;
+  height: 13px;
+  margin-left: -31px;
+  background: #0a0d0d;
+  border-radius: 0 0 8px 8px;
+}
+
+.hv-mac-screen {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: #fff;
+  background: radial-gradient(circle at 20% 10%, #14b8a6, #0f766e 42%, #0d2b29 86%);
+  border-radius: 8px;
+}
+
+.hv-mac-menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 15px;
+  padding: 0 11px;
+  font-size: 8px;
+  font-weight: 600;
+  background: rgba(0, 0, 0, .3);
+}
+
+.hv-mac-menu span:first-child {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.hv-tg {
+  position: absolute;
+  top: 32px;
+  left: 20px;
+  display: grid;
+  grid-template-columns: 94px 1fr;
+  width: 334px;
+  height: 238px;
+  overflow: hidden;
+  font-size: 8.5px;
+  color: #dbe8ee;
+  background: #17212b;
+  border-radius: 9px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .5);
+}
+
+.hv-tg-side {
+  position: relative;
+  display: grid;
+  gap: 3px;
+  align-content: start;
+  padding: 24px 6px 6px;
+  background: #0e1621;
+}
+
+.hv-dots {
+  position: absolute;
+  top: 7px;
+  left: 8px;
+  display: flex;
+  gap: 5px;
+}
+
+.hv-dots i {
+  width: 7px;
+  height: 7px;
+  background: #ff5f57;
+  border-radius: 50%;
+}
+
+.hv-dots i:nth-child(2) {
+  background: #febc2e;
+}
+
+.hv-dots i:nth-child(3) {
+  background: #28c840;
+}
+
+.hv-tg-chat {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 5px;
+  border-radius: 7px;
+}
+
+.hv-tg-chat.on {
+  color: #fff;
+  background: #2b5278;
+}
+
+.hv-tg-chat .av {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  font-size: 8px;
+  color: #fff;
+  background: #2aabee;
+  border-radius: 50%;
+}
+
+.hv-tg-chat:nth-child(3) .av {
+  background: #f59e0b;
+}
+
+.hv-tg-chat:nth-child(4) .av {
+  background: #10b981;
+}
+
+.hv-tg-chat:nth-child(5) .av {
+  background: #a78bfa;
+}
+
+.hv-tg-chat small {
+  display: block;
+  font-size: 7px;
+  opacity: .6;
+}
+
+.hv-tg-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.hv-tg-head {
+  padding: 7px 10px;
+  font-size: 9.5px;
+  font-weight: 700;
+  border-bottom: 1px solid #0e1621;
+}
+
+.hv-tg-head small {
+  margin-left: 4px;
+  font-weight: 400;
+  opacity: .6;
+}
+
+.hv-tg-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  padding: 9px;
+}
+
+.hv-dock {
+  position: absolute;
+  bottom: 7px;
+  left: 50%;
+  display: flex;
+  gap: 7px;
+  padding: 5px 8px;
+  background: rgba(255, 255, 255, .16);
+  border-radius: 11px;
+  transform: translateX(-50%);
+}
+
+.hv-dock i {
+  width: 18px;
+  height: 18px;
+  background: rgba(255, 255, 255, .62);
+  border-radius: 6px;
+}
+
+.hv-dock i:nth-child(2) {
+  background: #2aabee;
+}
+
+.hv-dock i:nth-child(4) {
+  background: #fbbf24;
+}
+
+.hv-dock i:nth-child(5) {
+  background: #f472b6;
+}
+
+.hv-dock i:nth-child(6) {
+  background: #34d399;
+}
+
+.hv-mac-base {
+  position: relative;
+  width: 110%;
+  height: 13px;
+  margin-left: -5%;
+  background: linear-gradient(#dfe6e5, #98a7a5 70%, #7f8e8c);
+  border-radius: 0 0 20px 20px;
+}
+
+.hv-mac-base::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 96px;
+  height: 5px;
+  margin-left: -48px;
+  background: rgba(0, 0, 0, .22);
+  border-radius: 0 0 8px 8px;
+}
+
+/* iPad Pro 11" (yatay): 397 x 285. İçinde müşteri portalı */
+.hv-ipad {
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 397px;
+  height: 285px;
+  padding: 9px;
+  background: #0a0d0d;
+  border-radius: 20px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, .55), inset 0 0 0 1.5px #2b3835;
+}
+
+.hv-ipad-screen {
+  position: relative;
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  font-size: 8.5px;
+  color: #0d2b29;
+  background: #f4fbfa;
+  border-radius: 12px;
+}
+
+.hv-ipad-side {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  padding: 14px 10px;
+  background: #e0f5f1;
+}
+
+.hv-ipad-side b {
+  font-size: 10px;
+}
+
+.hv-ipad-side span {
+  padding: 6px 8px;
+  font-weight: 600;
+  color: #4c6b68;
+  border-radius: 8px;
+}
+
+.hv-ipad-side span.on {
+  color: #fff;
+  background: #0d9488;
+}
+
+.hv-ipad-main {
+  padding: 14px 13px 10px 132px;
+}
+
+.hv-ipad-main h4 {
+  font-size: 12px;
+  letter-spacing: -.01em;
+}
+
+.hv-ipad-main p {
+  margin-bottom: 4px;
+  font-size: 8px;
+  color: #4c6b68;
+}
+
+.hv-card {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 9px;
+  margin-top: 7px;
+  background: #fff;
+  border: 1px solid #d4ece9;
+  border-radius: 10px;
+}
+
+.hv-card b {
+  display: block;
+  font-size: 8.5px;
+  line-height: 1.25;
+}
+
+.hv-card small {
+  font-size: 7px;
+  color: #4c6b68;
+}
+
+.hv-card .pr {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #16a34a;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.hv-card .pr small {
+  display: block;
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.hv-card-flash {
+  animation: hv-flash 10s infinite;
+}
+
+.hv-ipad-banner {
+  position: absolute;
+  top: 9px;
+  right: 11px;
+  z-index: 5;
+  display: flex;
+  gap: 7px;
+  width: 158px;
+  padding: 7px 9px;
+  font-size: 8px;
+  background: rgba(255, 255, 255, .94);
+  border: 1px solid #d4ece9;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(13, 43, 41, .22);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  animation: hv-banner 10s infinite;
+  animation-delay: -1s;
+}
+
+.hv-ipad-banner .ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  font-size: 11px;
+  color: #fff;
+  background: #2aabee;
+  border-radius: 6px;
+}
+
+.hv-ipad-banner b {
+  display: block;
+  font-size: 8px;
+}
+
+/* iPhone 15 Pro: 136 x 282 (x1.2) */
+.hv-phone {
+  left: 364px;
+  bottom: 0;
+  z-index: 3;
+  width: 136px;
+  height: 285px;
+  padding: 5px;
+  background: #0a0d0d;
+  border-radius: 25px;
+  box-shadow: 0 34px 60px rgba(0, 0, 0, .65), inset 0 0 0 1.5px #3a4a47, 0 0 60px rgba(45, 212, 191, .2);
+}
+
+.hv-phone::before {
+  content: "";
+  position: absolute;
+  top: 64px;
+  left: -2.5px;
+  width: 2.5px;
+  height: 22px;
+  background: #2b3835;
+  border-radius: 2px 0 0 2px;
+  box-shadow: 0 30px 0 #2b3835;
+}
+
+.hv-phone::after {
+  content: "";
+  position: absolute;
+  top: 86px;
+  right: -2.5px;
+  width: 2.5px;
+  height: 34px;
+  background: #2b3835;
+  border-radius: 0 2px 2px 0;
+}
+
+.hv-phone-screen {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  font-size: 7px;
+  color: #e6f2f7;
+  background: #17212b;
+  border-radius: 20px;
+}
+
+.hv-island {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  z-index: 6;
+  width: 42px;
+  height: 12px;
+  margin-left: -21px;
+  background: #000;
+  border-radius: 8px;
+}
+
+.hv-phone-head {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 24px 9px 7px;
+  font-size: 8px;
+  font-weight: 700;
+  background: #0e1621;
+  border-bottom: 1px solid #223345;
+}
+
+.hv-phone-head .av {
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  font-size: 7px;
+  color: #fff;
+  background: #2aabee;
+  border-radius: 50%;
+}
+
+.hv-phone-body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px 7px;
+}
+
+.hv-phone-body .hv-tb {
+  padding: 4px 6px;
+  font-size: 7px;
+}
+
+.hv-phone-banner {
+  position: absolute;
+  top: 25px;
+  right: 5px;
+  left: 5px;
+  z-index: 7;
+  display: flex;
+  gap: 5px;
+  padding: 6px 7px;
+  font-size: 7px;
+  line-height: 1.3;
+  color: #0d2b29;
+  background: rgba(240, 255, 253, .95);
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .35);
+  opacity: 0;
+  animation: hv-banner 10s infinite;
+}
+
+.hv-phone-banner .ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  font-size: 9px;
+  color: #fff;
+  background: #2aabee;
+  border-radius: 5px;
+}
+
+.hv-phone-banner b {
+  display: block;
+  font-size: 7px;
+}
+
+.hv-phone-banner .new {
+  font-weight: 800;
+  color: #16a34a;
+}
+
+.hv-home {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 42px;
+  height: 3px;
+  margin-left: -21px;
+  background: rgba(255, 255, 255, .55);
+  border-radius: 3px;
+}
+
+/* Alttaki akan bildirim duvarı */
+.hv-wall {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  padding: 6px 0 40px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.hv-row {
+  display: flex;
+  gap: 12px;
+  width: max-content;
+  animation: hv-marquee 42s linear infinite;
+}
+
+.hv-row-rev {
+  animation-direction: reverse;
+  animation-duration: 50s;
+}
+
+@keyframes hv-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.hv-wc {
+  display: flex;
+  flex: none;
+  gap: 9px;
+  align-items: center;
+  width: 226px;
+  padding: 8px 11px;
+  text-align: left;
+  background: rgba(255, 255, 255, .07);
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 14px;
+}
+
+.hv-wc .ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: #fff;
+  border-radius: 8px;
+}
+
+.hv-wc b {
+  display: block;
+  font-size: 12px;
+}
+
+.hv-wc span {
+  font-size: 11.5px;
+  color: #a9cdc7;
+}
+
+.hv-wc .new {
+  font-weight: 800;
+  color: var(--color-brand-light);
+}
+
+/* Geniş ekranlarda cihaz kümesi büyür */
+@media (min-width: 1500px) {
+  .hv-lineup {
+    zoom: 1.15;
+  }
+}
+
+@media (min-width: 1800px) {
+  .hv-lineup {
+    zoom: 1.2;
+  }
+}
+
+/* Küçük ekranlarda cihaz kümesi küçülür */
+@media (max-width: 1060px) {
+  .hv-lineup {
+    transform: scale(.88);
+    transform-origin: top center;
+    margin-bottom: -44px;
+  }
+}
+
+@media (max-width: 760px) {
+  .hv-lineup {
+    transform: scale(.5);
+    transform-origin: top center;
+    margin-bottom: -190px;
+  }
+}
+
+@media (max-width: 460px) {
+  .hv-lineup {
+    transform: scale(.4);
+    transform-origin: top center;
+    margin-bottom: -226px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .hv-lineup *,
+  .hv-row {
+    animation: none !important;
+  }
+
+  .hv-tb,
+  .hv-ipad-banner,
+  .hv-phone-banner {
+    opacity: 1;
+  }
+}
+
+/* ---------- pl- : plan bölümü animasyonları ---------- */
+.pl-rv {
+  opacity: 0;
+}
+
+.pl-in .pl-rv {
+  animation: pl-rise 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 0.16s);
+}
+
+@keyframes pl-rise {
+  from {
+    opacity: 0;
+    transform: translateY(34px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* madde tikleri sırayla zıplayarak belirir */
+.pl-ck {
+  opacity: 0;
+}
+
+.pl-in .pl-ck {
+  animation: pl-pop 0.55s cubic-bezier(0.3, 1.7, 0.5, 1) both;
+  animation-delay: calc(0.7s + var(--k, 0) * 0.14s);
+}
+
+.pl-in .pl-tx {
+  animation: pl-slide 0.5s ease both;
+  animation-delay: calc(0.7s + var(--k, 0) * 0.14s);
+}
+
+@keyframes pl-pop {
+  from {
+    opacity: 0;
+    transform: scale(0) rotate(-45deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pl-slide {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* buton ve rozette geçen parlama */
+.pl-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.pl-shine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -70%;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  transform: skewX(-20deg);
+  animation: pl-sweep 3.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pl-sweep {
+
+  0%,
+  55% {
+    left: -70%;
+  }
+
+  100% {
+    left: 140%;
+  }
+}
+
+/* ürün kutuları */
+.pl-slot {
+  opacity: 0;
+  transform: scale(0.3);
+}
+
+.pl-in .pl-slot {
+  animation: pl-slotin 0.55s cubic-bezier(0.3, 1.6, 0.5, 1) forwards;
+  animation-delay: calc(0.6s + var(--s, 0) * 0.36s);
+}
+
+@keyframes pl-slotin {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.pl-in .pl-lock svg {
+  animation: pl-shake 4.5s 2.6s infinite;
+}
+
+@keyframes pl-shake {
+
+  0%,
+  10%,
+  100% {
+    transform: none;
+  }
+
+  2% {
+    transform: rotate(-14deg);
+  }
+
+  4% {
+    transform: rotate(12deg);
+  }
+
+  6% {
+    transform: rotate(-8deg);
+  }
+
+  8% {
+    transform: rotate(5deg);
+  }
+}
+
+/* kapasite çubuğu ve uyarı yazısı */
+.pl-bar {
+  width: 0;
+}
+
+.pl-in .pl-bar {
+  animation: pl-fill 1.5s 0.6s cubic-bezier(0.3, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes pl-fill {
+  to {
+    width: 100%;
+  }
+}
+
+.pl-hint {
+  opacity: 0;
+}
+
+.pl-in .pl-hint {
+  animation: pl-hintin 0.5s 2.8s forwards;
+}
+
+@keyframes pl-hintin {
+  to {
+    opacity: 1;
+  }
+}
+
+/* premium: akan ürün şeridi */
+.pl-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.pl-track {
+  display: flex;
+  gap: 10px;
+  width: max-content;
+  animation: pl-mq 18s linear infinite;
+}
+
+@keyframes pl-mq {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .pl-rv,
+  .pl-slot,
+  .pl-hint,
+  .pl-ck {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .pl-bar {
+    width: 100% !important;
+    animation: none !important;
+  }
+
+  .pl-track,
+  .pl-shine::after,
+  .pl-lock svg,
+  .pl-tx {
+    animation: none !important;
+  }
+}
+/* ---------- pf- : SSS sohbet animasyonları ---------- */
+.pf-msg {
+  animation: pf-pop 0.45s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+@keyframes pf-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.7) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* "yazıyor…" noktaları */
+.pf-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #93b3ae;
+  animation: pf-bounce 1.1s infinite;
+}
+.pf-dot:nth-child(2) {
+  animation-delay: 0.16s;
+}
+.pf-dot:nth-child(3) {
+  animation-delay: 0.32s;
+}
+@keyframes pf-bounce {
+  0%,
+  60%,
+  100% {
+    transform: none;
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+}
+
+/* çevrimiçi noktası */
+.pf-online {
+  animation: pf-pulse 2s infinite;
+}
+@keyframes pf-pulse {
+  50% {
+    transform: scale(1.35);
+  }
+}
+
+/* kart girişi */
+.pf-rise {
+  opacity: 0;
+}
+.pf-in .pf-rise {
+  animation: pf-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+@keyframes pf-up {
+  from {
+    opacity: 0;
+    transform: translateY(34px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-msg,
+  .pf-dot,
+  .pf-online {
+    animation: none !important;
+  }
+  .pf-rise {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+}
+/* ---------- lf- : talep formu (Hadi başlayalım) ---------- */
+.lf-rise {
+  opacity: 0;
+}
+.lf-in .lf-rise {
+  animation: lf-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+@keyframes lf-up {
+  from {
+    opacity: 0;
+    transform: translateY(34px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- yüzen etiketli alan --- */
+.lf-field {
+  position: relative;
+}
+.lf-input {
+  width: 100%;
+  border: 2px solid #d4ece9;
+  border-radius: 16px;
+  background: #fff;
+  padding: 25px 44px 9px 16px;
+  font-size: 15px;
+  color: #0d2b29;
+  outline: none;
+  transition:
+    border-color 0.25s,
+    box-shadow 0.25s;
+}
+textarea.lf-input {
+  height: 100px;
+  resize: none;
+  padding-top: 28px;
+}
+.lf-input:focus {
+  border-color: #0d9488;
+  box-shadow: 0 0 0 5px rgba(13, 148, 136, 0.12);
+}
+.lf-label {
+  position: absolute;
+  left: 18px;
+  top: 17px;
+  font-size: 15px;
+  color: #7a9491;
+  pointer-events: none;
+  transition: all 0.2s;
+}
+.lf-input:focus + .lf-label,
+.lf-input:not(:placeholder-shown) + .lf-label {
+  top: 7px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #0d9488;
+}
+.lf-ok {
+  position: absolute;
+  right: 15px;
+  top: 18px;
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 50%;
+  background: #0d9488;
+  color: #fff;
+  opacity: 0;
+  transform: scale(0) rotate(-40deg);
+  transition: 0.35s cubic-bezier(0.3, 1.7, 0.5, 1);
+}
+.lf-input:not(:placeholder-shown) ~ .lf-ok {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- ilerleme çubuğu --- */
+.lf-bar {
+  width: 0;
+  transition: width 0.6s cubic-bezier(0.3, 1.2, 0.4, 1);
+}
+
+/* --- kayan plan seçici --- */
+.lf-seg {
+  position: relative;
+  display: grid;
+  min-height: 58px;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 16px;
+  background: #e0f5f1;
+  padding: 4px;
+}
+.lf-seg-thumb {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  border-radius: 13px;
+  background: #fff;
+  box-shadow: 0 6px 16px rgba(13, 148, 136, 0.2);
+  transition: transform 0.45s cubic-bezier(0.3, 1.3, 0.4, 1);
+}
+.lf-seg[data-v="premium"] .lf-seg-thumb {
+  transform: translateX(100%);
+}
+.lf-seg button {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4c6b68;
+  transition: color 0.3s;
+}
+.lf-seg button[aria-pressed="true"] {
+  color: #0d2b29;
+}
+
+/* --- sol panel: roket, radar, yıldızlar, maddeler --- */
+.lf-rocket {
+  position: relative;
+  display: grid;
+  width: 110px;
+  height: 110px;
+  place-items: center;
+}
+.lf-rocket b {
+  position: relative;
+  z-index: 2;
+  font-size: 64px;
+  font-weight: 400;
+  line-height: 1;
+  animation: lf-hover 3.4s ease-in-out infinite;
+}
+.lf-rocket::before,
+.lf-rocket::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(94, 234, 212, 0.5);
+  animation: lf-radar 3s ease-out infinite;
+}
+.lf-rocket::after {
+  animation-delay: 1.5s;
+}
+@keyframes lf-hover {
+  50% {
+    transform: translateY(-9px) rotate(3deg);
+  }
+}
+@keyframes lf-radar {
+  from {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(2.3);
+    opacity: 0;
+  }
+}
+.lf-star {
+  position: absolute;
+  color: #5eead4;
+  pointer-events: none;
+  animation: lf-twinkle 2.8s ease-in-out infinite;
+}
+@keyframes lf-twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.6);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15) rotate(20deg);
+  }
+}
+.lf-li {
+  opacity: 0;
+  transform: translateX(-14px);
+}
+.lf-in .lf-li {
+  animation: lf-slide 0.6s ease forwards;
+  animation-delay: calc(0.5s + var(--k, 0) * 0.15s);
+}
+@keyframes lf-slide {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- gönder butonu --- */
+.lf-send {
+  position: relative;
+  overflow: hidden;
+}
+.lf-send::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -70%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-20deg);
+  animation: lf-sweep 3.4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes lf-sweep {
+  0%,
+  55% {
+    left: -70%;
+  }
+  100% {
+    left: 140%;
+  }
+}
+.lf-send svg {
+  transition: transform 0.3s;
+}
+.lf-send:hover:not(:disabled) svg {
+  transform: translate(3px, -3px) rotate(6deg);
+}
+.lf-sending svg {
+  animation: lf-fly 0.9s ease-in forwards;
+}
+@keyframes lf-fly {
+  to {
+    transform: translate(90px, -50px) scale(0.3);
+    opacity: 0;
+  }
+}
+.lf-sending span::after {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-left: 10px;
+  vertical-align: -2px;
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: lf-rot 0.7s linear infinite;
+}
+@keyframes lf-rot {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- başarı ekranı: tik, halka, konfeti --- */
+.lf-done {
+  animation: lf-up 0.6s both;
+}
+.lf-bigck {
+  animation: lf-ring 1.6s 0.5s ease-out;
+}
+.lf-bigck path {
+  stroke-dasharray: 26;
+  stroke-dashoffset: 26;
+  animation: lf-draw 0.6s 0.35s ease forwards;
+}
+@keyframes lf-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes lf-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 46px rgba(13, 148, 136, 0);
+  }
+}
+.lf-cf {
+  position: absolute;
+  left: 50%;
+  top: 80px;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: lf-burst 1.4s 0.4s ease-out forwards;
+}
+@keyframes lf-burst {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x), var(--y)) rotate(var(--r));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lf-rise,
+  .lf-li {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+  .lf-rocket b,
+  .lf-rocket::before,
+  .lf-rocket::after,
+  .lf-star,
+  .lf-send::after,
+  .lf-sending svg,
+  .lf-done,
+  .lf-bigck,
+  .lf-cf {
+    animation: none !important;
+  }
+  .lf-bigck path {
+    stroke-dashoffset: 0;
+    animation: none !important;
+  }
+}
