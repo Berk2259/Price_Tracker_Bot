@@ -320,7 +320,7 @@ Panel `http://localhost:3000` adresinde açılır.
 Ek olarak:
 
 - `products.comparison_group`: aynı grup adını taşıyan ürünler aynı ürünün farklı
-  marketlerdeki kayıtlarıdır (Ürün kıyası bu alanı kullanır).
+  farklı satıcılardaki kayıtlarıdır (Ürün kıyası bu alanı kullanır).
 - `price_daily` (görünüm): `price_history`'nin günlük son fiyat özeti (Türkiye
   saatine göre). `security_invoker` ile çalışır, yani sorgulayan kullanıcının
   RLS izinleri geçerlidir.
