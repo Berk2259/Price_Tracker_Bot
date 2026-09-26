@@ -11,7 +11,7 @@ const features: Feature[] = [
     { text: "Hedef fiyat ve her değişimde bildirim", free: true },
     { text: "Öncelikli destek", free: false },
     { text: "Haftalık ve aylık rapor", free: false },
-    { text: "Alternatiflerle kıyas", free: false },
+    { text: "Satıcılar arası fiyat kıyası", free: false },
 ];
 
 function Check({ on, gold }: { on: boolean; gold?: boolean }) {

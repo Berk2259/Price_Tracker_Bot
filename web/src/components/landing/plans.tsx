@@ -18,7 +18,7 @@ const premiumItems: Item[] = [
   { text: "Telegram bildirimi" },
   { text: "Hedef fiyat ve her değişimde bildirim" },
   { text: "Öncelikli destek" },
-  { text: "Alternatiflerle fiyat kıyaslama" },
+  { text: "Satıcılar arası fiyat kıyaslama" },
   { text: "Haftalık ve aylık rapor ve analiz" },
 ];
 

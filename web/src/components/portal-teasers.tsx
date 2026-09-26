@@ -18,7 +18,7 @@ const items: {
     {
       href: "/portal/compare",
       title: "Ürün kıyası",
-      text: "Alternatiflerle fiyat kıyasla",
+      text: "Satıcılardaki fiyatı kıyasla",
       icon: "scale",
       live: true,
     },

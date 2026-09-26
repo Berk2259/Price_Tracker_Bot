@@ -10,8 +10,8 @@ const info: Record<Kind, { title: string; text: string; icon: AdminIconName }> =
     icon: "chart",
   },
   compare: {
-    title: "Alternatiflerle fiyat kıyaslama",
-    text: "Aynı ürünü farklı mağazalarda yan yana gör, en ucuz olanı hemen fark et.",
+    title: "Satıcılar arası fiyat kıyaslama",
+    text: "Aynı ürünü farklı satıcılarda yan yana gör, en ucuzunu hemen fark et.",
     icon: "scale",
   },
 };

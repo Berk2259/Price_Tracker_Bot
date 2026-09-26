@@ -12,6 +12,7 @@ type ProductInput = {
   sourceId: number;
   checkIntervalMinutes: number;
   isActive: boolean;
+  comparisonGroup?: string;
 };
 
 function validate(input: ProductInput): string | null {
@@ -47,6 +48,12 @@ function errorMessage(code: string | undefined, fallback: string): string {
   return fallback;
 }
 
+// Boş bırakılan grup null olarak kaydedilir.
+function cleanGroup(value: string | undefined): string | null {
+  const text = (value ?? "").trim();
+  return text === "" ? null : text;
+}
+
 export async function addProduct(input: ProductInput): Promise<Result> {
   const problem = validate(input);
   if (problem) return { ok: false, message: problem };
@@ -59,6 +66,7 @@ export async function addProduct(input: ProductInput): Promise<Result> {
     source_id: input.sourceId,
     check_interval_minutes: input.checkIntervalMinutes,
     is_active: input.isActive,
+    comparison_group: cleanGroup(input.comparisonGroup),
   });
 
   if (error) {
@@ -96,6 +104,7 @@ export async function updateProduct(
       source_id: input.sourceId,
       check_interval_minutes: input.checkIntervalMinutes,
       is_active: input.isActive,
+      comparison_group: cleanGroup(input.comparisonGroup),
       ...(urlChanged
         ? { current_price: null, last_checked_at: null, last_status: null }
         : {}),

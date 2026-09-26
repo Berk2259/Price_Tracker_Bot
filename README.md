@@ -11,7 +11,7 @@ Price_Tracker_Bot/
 │   ├── main.py        Telegram botu (müşteri bağlama)
 │   ├── checker.py     Fiyat kontrolcüsü (fiyatı okur ve kaydeder)
 │   ├── notifier.py    Fiyat değişiminde Telegram bildirimi
-│   ├── adapters/      Fiyat okuyucular (her kaynak türü için bir modül)
+│   ├── adapters/      Fiyat okuyucular (json_ld.py: düz HTTP, browser.py: gerçek tarayıcı)
 │   ├── requirements.txt
 │   └── .env           Gizli anahtarlar (GitHub'a gitmez)
 ├── web/
@@ -34,6 +34,7 @@ Price_Tracker_Bot/
 | Veritabanı ve giriş | Supabase |
 | Admin panel | Next.js |
 | Bot | Python 3.14 |
+| Fiyat okuma | httpx (düz HTTP), Playwright (gerçek tarayıcı) |
 | Bildirim | Telegram Bot API |
 
 
@@ -125,10 +126,12 @@ koyu temalıdır, masaüstünde yan menü, telefonda alt sekmelerle çalışır
   kilitli önizleme görür.
 
 Haftalık rapor, `price_daily` görünümündeki günlük son fiyatlardan ve bildirim
-kayıtlarından hesaplanır (son 7 ya da 30 gün). Ürün kıyası, yönetici tarafından
-aynı **alternatif grubuna** (`products.comparison_group`) konulmuş ürünleri yan
-yana gösterir; gruplar admin panelinde ürün düzenlenirken belirlenir. "Destekle
-yaz" ve "Premium için yaz" düğmeleri şimdilik yalnızca görünümdür.
+kayıtlarından hesaplanır (son 7 ya da 30 gün). Ürün kıyası, aynı ürünün farklı
+satıcılardaki fiyatını yan yana gösterir: yönetici, aynı ürünün her satıcıdaki
+kaydını admin panelinde ürün düzenlerken aynı **karşılaştırma grubuna**
+(`products.comparison_group`, örn. `coca-cola-1-5l`) koyar. Müşteri bir ürünü
+takip ettiğinde, o ürünün grubundaki tüm marketler kıyas sayfasında görünür.
+"Destekle yaz" ve "Premium için yaz" düğmeleri şimdilik yalnızca görünümdür.
 
 Portalın veritabanı erişimi satır bazlı güvenlik (RLS) kurallarıyla sağlanır:
 müşteri sadece kendi `customers`, `subscriptions`, `customer_requests`,
@@ -196,7 +199,8 @@ içinde gri ve yeşil paletin yeniden tanımlanmasıyla (koyu turkuaz) verilir.
   ürün durumu. Hepsi Supabase'den gerçek veriyle gelir.
 - **Ürünler**: arama, durum filtreleri (Hatalı, Sırada, Pasif), durum rozetleri
   ve tek tıkla "şimdi kontrol et". Ürün ekleme ve düzenleme sağdan açılan
-  çekmecede yapılır (`product-drawer.tsx`).
+  çekmecede yapılır (`product-drawer.tsx`); aynı çekmecede ürünün karşılaştırma
+  grubu da girilir.
 - **Talepler ve Müşteri talepleri**: gelen kutusu düzeni; durum filtreleri,
   arama ve renkli durum seçicisi. Talepler sayfasında "Hesap aç" kartın içinde
   açılır.
@@ -245,6 +249,17 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
+
+Botlara engel koyan siteleri (örn. CarrefourSA, Cloudflare kullanır) okumak için
+gerçek bir tarayıcı gerekir. Bunun için Playwright'ı ve Chromium'u bir kez kur:
+
+```powershell
+pip install playwright
+playwright install chromium
+```
+
+Bu yalnızca kaynağın yöntemi **Tarayıcı (Playwright)** olan ürünler için
+kullanılır; diğer ürünler eskisi gibi düz HTTP ile okunur.
 
 3. Botu çalıştır:
 
@@ -304,8 +319,8 @@ Panel `http://localhost:3000` adresinde açılır.
 
 Ek olarak:
 
-- `products.comparison_group`: aynı grup adını taşıyan ürünler birbirinin
-  alternatifidir (Ürün kıyası bu alanı kullanır).
+- `products.comparison_group`: aynı grup adını taşıyan ürünler aynı ürünün farklı
+  marketlerdeki kayıtlarıdır (Ürün kıyası bu alanı kullanır).
 - `price_daily` (görünüm): `price_history`'nin günlük son fiyat özeti (Türkiye
   saatine göre). `security_invoker` ile çalışır, yani sorgulayan kullanıcının
   RLS izinleri geçerlidir.
@@ -318,6 +333,23 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 3. Sitenin iç JSON endpoint'i
 4. Playwright (gerçek tarayıcı)
 5. Ücretli scraping servisi (son çare)
+
+Hangi ürünün hangi yöntemle okunacağı, ürünün **kaynağının** yöntemine göre
+belirlenir (`sources.method`, panelde Kaynaklar sayfası). Şu an iki yöntem
+çalışır durumdadır:
+
+- **JSON-LD (sayfa verisi)**: düz HTTP isteği ile sayfadaki JSON-LD fiyat verisi
+  okunur (örn. Migros). Hızlıdır.
+- **Tarayıcı (Playwright)**: headless Chromium ile sayfa açılır ve aynı JSON-LD
+  verisi okunur (örn. CarrefourSA). Cloudflare gibi bot korumasını geçmek için
+  varsayılan "HeadlessChrome" kimliği yerine normal bir Chrome kimliği
+  kullanılır. Her sayfa birkaç saniye sürer. Kontrolcü tarayıcıyı yalnızca bu
+  yöntemdeki ürünler için başlatır.
+
+Yeni bir market eklerken önce düz HTTP ile (JSON-LD) denenmelidir; site 403
+veriyorsa kaynağın yöntemi "Tarayıcı (Playwright)" yapılır. Sunucunun IP adresi
+Cloudflare tarafından farklı değerlendirilebileceği için, canlıya alırken
+tarayıcı yöntemi orada da denenmelidir.
 
 ## Yapılanlar
 
@@ -357,4 +389,6 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Admin paneli yenilendi (2. aşama): Talepler, Müşteri talepleri, Bildirimler, Fiyat geçmişi (grafikli), Kategoriler ve Kaynaklar sayfaları
 - [x] Admin paneli yenilendi (3. aşama): Takipler ve Müşteriler sayfaları, panelden müşteri planı değiştirme
 - [x] Müşteri portalı yenilendi: koyu tema, yan menü, geniş ürün sayfası, bildirimler, gelişmiş talep formu, Planım
-- [x] Premium: Haftalık ve aylık rapor ile Alternatiflerle ürün kıyası (alternatifler admin panelinde "Alternatif grubu" ile tanımlanır)
+- [x] Premium: Haftalık ve aylık rapor ile Satıcılar arası ürün kıyası (aynı ürünün market kayıtları admin panelinde "Karşılaştırma grubu" ile bağlanır)
+- [x] Bot: gerçek tarayıcı (Playwright) ile okuma, Cloudflare korumalı siteler için (CarrefourSA); kaynağın yöntemine göre okuyucu seçimi
+- [x] Panel: ürünlere karşılaştırma grubu alanı

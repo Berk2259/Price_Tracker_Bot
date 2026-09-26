@@ -34,7 +34,7 @@ export function PortalCompare({
   solo: SoloProduct[];
   lastUpdated: string;
 }) {
-  // Her grup için: en ucuz satır ve takip edilen ürünle arasındaki fark.
+  // Her grup için: en ucuz ve en pahalı satır, aradaki fark.
   const analysed = groups.map((g) => {
     const priced = g.rows.filter((r) => r.price !== null);
     const sorted = [...g.rows].sort(
@@ -43,40 +43,49 @@ export function PortalCompare({
     const cheapest = priced.length
       ? priced.reduce((a, b) => ((b.price as number) < (a.price as number) ? b : a))
       : null;
-    const minePrices = g.rows
-      .filter((r) => r.mine && r.price !== null)
-      .map((r) => r.price as number);
-    const myBest = minePrices.length ? Math.min(...minePrices) : null;
-    const saving =
-      cheapest && myBest !== null && myBest > (cheapest.price as number)
-        ? myBest - (cheapest.price as number)
+    const priciest = priced.length
+      ? priced.reduce((a, b) => ((b.price as number) > (a.price as number) ? b : a))
+      : null;
+    const spread =
+      cheapest && priciest
+        ? (priciest.price as number) - (cheapest.price as number)
         : 0;
-    return { g, sorted, cheapest, saving };
+    const spreadPct =
+      cheapest && spread > 0 ? (spread / (cheapest.price as number)) * 100 : 0;
+    // Satırlarda marketler farklıysa market adını, aynı market ise ürün adını başlık yap.
+    const showMarket = new Set(g.rows.map((r) => r.source)).size > 1;
+    const title = g.rows[0]?.name ?? g.key;
+    return { g, sorted, cheapest, spread, spreadPct, showMarket, title };
   });
 
-  const totalSaving = analysed.reduce((s, a) => s + a.saving, 0);
-  const cheaperExists = analysed.filter((a) => a.saving > 0.001).length;
   const currency = groups[0]?.rows[0]?.currency ?? "TRY";
+  const biggest = analysed.reduce(
+    (best, a) => (a.spread > best.spread ? a : best),
+    analysed[0],
+  );
+  const avgPct = analysed.length
+    ? analysed.reduce((s, a) => s + a.spreadPct, 0) / analysed.length
+    : 0;
 
   const tiles = [
     {
       label: "Karşılaştırılan",
       value: String(groups.length),
-      text: "ürünün alternatifi var",
+      text: "ürün marketlerde kıyaslanıyor",
       icon: "scale" as const,
       tone: "bg-emerald-500/15 text-emerald-400",
     },
     {
-      label: "Tasarruf potansiyeli",
-      value: money(totalSaving, currency),
-      text: "en ucuz alternatifleri seçersen",
+      label: "En büyük fark",
+      value: money(biggest?.spread ?? 0, currency),
+      text: biggest?.title ?? "-",
       icon: "coin" as const,
       tone: "bg-green-400/15 text-green-400",
     },
     {
-      label: "Daha ucuzu var",
-      value: `${cheaperExists} / ${groups.length}`,
-      text: "üründe daha ucuz alternatif var",
+      label: "Ortalama fark",
+      value: `%${pct(avgPct)}`,
+      text: "en ucuz ile en pahalı market arası",
       icon: "trend" as const,
       tone: "bg-amber-400/15 text-amber-300",
     },
@@ -93,17 +102,16 @@ export function PortalCompare({
     <div>
       <div className="ad-in">
         <h1 className="text-[26px] font-bold tracking-[-0.02em]">
-          Alternatiflerle fiyat kıyaslama
+          Marketlerde fiyat kıyaslama
         </h1>
         <p className="mt-0.5 text-zinc-500">
-          Takip ettiğin ürünlerin, yerine alabileceğin alternatifleriyle fiyat
-          karşılaştırması.
+          Takip ettiğin ürünlerin farklı marketlerdeki fiyatları.
         </p>
       </div>
 
       {groups.length === 0 ? (
         <div className="mt-5 rounded-[20px] border-2 border-dashed border-zinc-800 px-5 py-12 text-center text-zinc-500">
-          Takip ettiğin ürünlerin henüz bir alternatifi eklenmemiş.
+          Takip ettiğin ürünler için henüz market karşılaştırması eklenmemiş.
         </div>
       ) : (
         <>
@@ -125,17 +133,15 @@ export function PortalCompare({
                 <div className="mt-2 text-[24px] font-extrabold leading-[1.15] tracking-[-0.03em]">
                   {t.value}
                 </div>
-                <div className="mt-0.5 text-[12.5px] font-bold text-zinc-500">
+                <div className="mt-0.5 truncate text-[12.5px] font-bold text-zinc-500">
                   {t.text}
                 </div>
               </div>
             ))}
           </div>
 
-          {analysed.map(({ g, sorted, cheapest, saving }, gi) => {
-            const mine = g.rows.filter((r) => r.mine);
-            const title = mine[0]?.name ?? g.key;
-            return (
+          {analysed.map(
+            ({ g, sorted, cheapest, spread, spreadPct, showMarket, title }, gi) => (
               <div
                 key={g.key}
                 className="ad-in mt-4 overflow-hidden rounded-[20px] border border-zinc-800 bg-zinc-900"
@@ -144,17 +150,17 @@ export function PortalCompare({
                 <div className="flex flex-wrap items-center gap-3 border-b border-zinc-800 px-[18px] py-4">
                   <b className="text-base">{title}</b>
                   <span className="rounded-lg bg-emerald-500/15 px-2 py-0.5 text-[11.5px] font-extrabold text-emerald-300">
-                    {g.rows.length} ürün
+                    {g.rows.length} {showMarket ? "market" : "ürün"}
                   </span>
-                  {saving > 0.001 && cheapest ? (
+                  {cheapest && spread > 0.001 ? (
                     <span className="ml-auto inline-flex items-center gap-2 rounded-full bg-green-400/15 px-3 py-1 text-[13px] font-extrabold text-green-400">
                       <AdminIcon name="coin" size={14} />
-                      {cheapest.name} {money(saving, cheapest.currency)} daha ucuz
+                      {showMarket ? cheapest.source : cheapest.name} en ucuz ·{" "}
+                      {money(spread, cheapest.currency)} fark (%{pct(spreadPct)})
                     </span>
                   ) : (
-                    <span className="ml-auto inline-flex items-center gap-2 rounded-full bg-green-400/15 px-3 py-1 text-[13px] font-extrabold text-green-400">
-                      <AdminIcon name="check" size={14} stroke={3} />
-                      Takip ettiğin ürün en ucuz
+                    <span className="ml-auto inline-flex items-center gap-2 rounded-full bg-zinc-800 px-3 py-1 text-[13px] font-extrabold text-zinc-400">
+                      Fiyatlar aynı
                     </span>
                   )}
                 </div>
@@ -174,21 +180,18 @@ export function PortalCompare({
                   return (
                     <div
                       key={r.id}
-                      className={
-                        "grid items-center gap-3.5 border-t border-zinc-800 px-[18px] py-3 transition-colors first-of-type:border-t-0 hover:bg-emerald-500/10 sm:grid-cols-[1.4fr_130px_170px_100px_60px] " +
-                        (r.mine ? "bg-emerald-500/[0.06]" : "")
-                      }
+                      className="grid items-center gap-3.5 border-t border-zinc-800 px-[18px] py-3 transition-colors first-of-type:border-t-0 hover:bg-emerald-500/10 sm:grid-cols-[1.4fr_130px_170px_100px_60px]"
                     >
                       <div className="min-w-0">
-                        <b className="block font-extrabold">{r.name}</b>
-                        <small className="text-zinc-500">
-                          {r.source}
-                          {r.mine && (
-                            <span className="ml-2 font-bold text-emerald-300">
-                              Takip ettiğin
-                            </span>
-                          )}
-                        </small>
+                        <b className="block font-extrabold">
+                          {showMarket ? r.source || r.name : r.name}
+                        </b>
+                        {showMarket && (
+                          <small className="text-zinc-500">{r.name}</small>
+                        )}
+                        {!showMarket && r.source && (
+                          <small className="text-zinc-500">{r.source}</small>
+                        )}
                       </div>
 
                       <div
@@ -248,15 +251,15 @@ export function PortalCompare({
                   );
                 })}
               </div>
-            );
-          })}
+            ),
+          )}
         </>
       )}
 
       {solo.length > 0 && (
         <div className="mt-4 overflow-hidden rounded-[20px] border border-zinc-800 bg-zinc-900">
           <div className="flex items-center gap-3 border-b border-zinc-800 px-[18px] py-4">
-            <b className="text-base">Alternatifi olmayan ürünler</b>
+            <b className="text-base">Karşılaştırması olmayan ürünler</b>
             <span className="rounded-lg bg-zinc-800 px-2 py-0.5 text-[11.5px] font-extrabold text-zinc-400">
               {solo.length}
             </span>
@@ -271,7 +274,7 @@ export function PortalCompare({
                 <b className="text-zinc-50">{p.name}</b>
                 {p.source && ` · ${p.source}`}
                 <small className="block">
-                  Bu ürün için henüz alternatif eklenmedi.
+                  Bu ürün için henüz başka market fiyatı eklenmedi.
                 </small>
               </span>
             </div>
@@ -282,9 +285,10 @@ export function PortalCompare({
       <div className="mt-4 flex items-center gap-3 rounded-[20px] border border-zinc-800 bg-zinc-900 px-[18px] py-3.5 text-[13.5px] text-zinc-500">
         <AdminIcon name="help" size={20} />
         <span>
-          Alternatifleri ekibimiz ekler. Bir ürün için alternatif görmek
-          istersen <b className="text-emerald-500">Talep gönder</b> sayfasından
-          not bırakabilirsin.
+          Market karşılaştırmalarını ekibimiz ekler. Bir ürünün başka
+          marketlerdeki fiyatını görmek istersen{" "}
+          <b className="text-emerald-500">Talep gönder</b> sayfasından not
+          bırakabilirsin.
         </span>
       </div>
     </div>

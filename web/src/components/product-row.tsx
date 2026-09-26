@@ -89,6 +89,11 @@ export function ProductRow({
         <p className="font-bold text-zinc-50">{product.name}</p>
         <p className="text-xs text-zinc-500">
           {categoryName} · {sourceName}
+          {product.comparison_group && (
+            <span className="ml-2 rounded-full bg-emerald-500/15 px-2 py-px text-[11px] font-bold text-emerald-300">
+              {product.comparison_group}
+            </span>
+          )}
         </p>
         {message && <p className="mt-1 text-xs text-red-500">{message}</p>}
       </td>

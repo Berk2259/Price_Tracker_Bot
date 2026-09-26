@@ -1,11 +1,8 @@
 import asyncio
 import os
 from datetime import datetime, timezone
-
 from dotenv import load_dotenv
 from supabase import create_client
-
-from adapters.json_ld import fetch_price
 from notifier import send_notifications
 
 load_dotenv()
@@ -32,11 +29,23 @@ def is_due(product: dict) -> bool:
     # 1 dakika tolerans: zamanlayıcı birkaç saniye erken çalışırsa tur atlanmasın
     return elapsed >= product["check_interval_minutes"] - 1
 
+def read_price(product: dict):
+    """Kaynağın yöntemine göre fiyatı okur."""
+    source = product.get("sources")
+    if isinstance(source, list):
+        source = source[0] if source else None
+    method = (source or {}).get("method", "json_ld")
+
+    if method == "browser":
+        from adapters.browser import fetch_price
+    else:
+        from adapters.json_ld import fetch_price
+    return fetch_price(product["url"])
 
 def check_product(product: dict):
     """Fiyat değiştiyse (product, eski, yeni) döndürür, yoksa None."""
     try:
-        result = fetch_price(product["url"])
+        result = read_price(product)
     except Exception as e:
         (
             supabase.table("products")
@@ -90,7 +99,7 @@ def run_check_cycle() -> None:
     products = (
         supabase.table("products")
         .select(
-            "id, name, url, current_price, last_checked_at, check_interval_minutes, force_check_requested"
+                        "id, name, url, current_price, last_checked_at, check_interval_minutes, force_check_requested, sources(method)"
         )
         .eq("is_active", True)
         .execute()

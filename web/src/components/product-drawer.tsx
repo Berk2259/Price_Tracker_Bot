@@ -23,6 +23,7 @@ export type ProductData = {
   last_status: string | null;
   is_active: boolean;
   force_check_requested: boolean;
+  comparison_group: string | null;
 };
 
 const fieldClass =
@@ -35,11 +36,13 @@ export function ProductDrawer({
   product,
   categories,
   sources,
+  groups,
   onClose,
 }: {
   product: ProductData | null;
   categories: Option[];
   sources: Option[];
+  groups: string[];
   onClose: () => void;
 }) {
   const isNew = product === null;
@@ -56,6 +59,7 @@ export function ProductDrawer({
     String(product?.check_interval_minutes ?? 60),
   );
   const [isActive, setIsActive] = useState(product?.is_active ?? true);
+  const [group, setGroup] = useState(product?.comparison_group ?? "");
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -76,6 +80,7 @@ export function ProductDrawer({
       sourceId: Number(sourceId),
       checkIntervalMinutes: Number(interval),
       isActive,
+      comparisonGroup: group,
     };
 
     startTransition(async () => {
@@ -209,6 +214,30 @@ export function ProductDrawer({
               onChange={(e) => setInterval(e.target.value)}
               className={fieldClass}
             />
+          </div>
+
+          <div>
+            <label className={labelClass}>Karşılaştırma grubu (isteğe bağlı)</label>
+            <input
+              value={group}
+              onChange={(e) => setGroup(e.target.value)}
+              list="comparison-groups"
+              placeholder="örn. coca-cola-1-5l"
+              className={fieldClass}
+            />
+            <datalist id="comparison-groups">
+              {groups.map((g) => (
+                <option key={g} value={g} />
+              ))}
+            </datalist>
+            <p className="mt-1.5 text-xs leading-relaxed text-zinc-500">
+              Aynı ürünün farklı satıcılardaki (market, e-ticaret ya da bilet
+              sitesi) kayıtlarına aynı grup adını yaz (örn. Migros ve
+              CarrefourSA&apos;daki Coca-Cola 1,5 L için{" "}
+              <b>coca-cola-1-5l</b>). Premium müşteriler takip ettikleri
+              ürünün diğer satıcılardaki fiyatını &quot;Ürün kıyası&quot;nda
+              görür.
+            </p>
           </div>
 
           <button

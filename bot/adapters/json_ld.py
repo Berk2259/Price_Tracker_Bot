@@ -41,11 +41,9 @@ def _find_offer(node):
     return None
 
 
-def fetch_price(url: str) -> PriceResult:
-    response = httpx.get(url, headers=HEADERS, follow_redirects=True, timeout=20)
-    response.raise_for_status()
-
-    for match in LD_JSON_PATTERN.finditer(response.text):
+def parse_price(html: str) -> PriceResult:
+    """Sayfa HTML'inden JSON-LD fiyat bilgisini çıkarır."""
+    for match in LD_JSON_PATTERN.finditer(html):
         try:
             data = json.loads(match.group(1))
         except json.JSONDecodeError:
@@ -61,3 +59,9 @@ def fetch_price(url: str) -> PriceResult:
             )
 
     raise ValueError("Sayfada fiyat bilgisi (JSON-LD) bulunamadı")
+
+
+def fetch_price(url: str) -> PriceResult:
+    response = httpx.get(url, headers=HEADERS, follow_redirects=True, timeout=20)
+    response.raise_for_status()
+    return parse_price(response.text)

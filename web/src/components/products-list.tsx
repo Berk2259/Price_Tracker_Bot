@@ -168,6 +168,13 @@ export function ProductsList({
           product={editing}
           categories={categories}
           sources={sources}
+          groups={[
+            ...new Set(
+              products
+                .map((p) => p.comparison_group)
+                .filter((g): g is string => !!g),
+            ),
+          ]}
           onClose={closeDrawer}
         />
       )}
