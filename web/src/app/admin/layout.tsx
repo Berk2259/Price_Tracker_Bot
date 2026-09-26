@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/sidebar";
+import { AdminTopbar } from "@/components/admin-topbar";
 
 export default async function AdminLayout({
   children,
@@ -11,10 +12,30 @@ export default async function AdminLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Menüdeki kırmızı rozetler: durumu "bekliyor" olan kayıtların sayısı.
+  const [leads, customerRequests] = await Promise.all([
+    supabase
+      .from("leads")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "bekliyor"),
+    supabase
+      .from("customer_requests")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "bekliyor"),
+  ]);
+
+  const badges = {
+    "/admin/leads": leads.count ?? 0,
+    "/admin/customer-requests": customerRequests.count ?? 0,
+  };
+
   return (
-    <>
-      <Sidebar email={user?.email} />
-      <main className="ml-60 min-h-screen px-8 py-8">{children}</main>
-    </>
+    <div className="force-dark min-h-screen bg-zinc-950 text-zinc-50">
+      <Sidebar email={user?.email} badges={badges} />
+      <div className="ml-60 min-h-screen">
+        <AdminTopbar />
+        <main className="px-8 py-8">{children}</main>
+      </div>
+    </div>
   );
 }

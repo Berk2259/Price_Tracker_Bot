@@ -158,6 +158,28 @@ takip verisi değildir. Premium planda görünen "Alternatiflerle fiyat kıyasla
 ile "Haftalık ve aylık rapor ve analiz" henüz yapılmamıştır, bu yüzden
 "Yakında" etiketiyle gösterilir.
 
+### Admin paneli tasarımı
+
+Admin paneli koyu temalıdır ve müşteri portalından ayrıdır. `web/src/app/admin/layout.tsx`
+içindeki `force-dark` sınıfı, `globals.css`'teki özel `dark` varyantı sayesinde
+admin içindeki tüm `dark:` sınıflarını işletim sistemi temasından bağımsız açar;
+giriş sayfası ve portal etkilenmez. Renkler yine `globals.css`'te, `.force-dark`
+içinde gri ve yeşil paletin yeniden tanımlanmasıyla (koyu turkuaz) verilir.
+
+- **Yan menü** (`sidebar.tsx`): Gelenler, Katalog, Takip gruplarına ayrılmıştır.
+  Talepler ve Müşteri talepleri yanında durumu "bekliyor" olan kayıtların sayısı
+  kırmızı rozet olarak görünür (sayılar `admin/layout.tsx`'te hesaplanır).
+- **Üst çubuk ve arama** (`admin-topbar.tsx`, `admin-nav.ts`): sayfa başlığı ve
+  Ctrl+K ile açılan sayfa arama penceresi.
+- **Ana sayfa**: "Dikkat gerektirenler" (okunamayan ürünler, bekleyen talepler,
+  Telegram'a bağlanmamış müşteriler), istatistik kartları, son bildirimler ve
+  ürün durumu. Hepsi Supabase'den gerçek veriyle gelir.
+- **Ürünler**: arama, durum filtreleri (Hatalı, Sırada, Pasif), durum rozetleri
+  ve tek tıkla "şimdi kontrol et". Ürün ekleme ve düzenleme sağdan açılan
+  çekmecede yapılır (`product-drawer.tsx`).
+
+Diğer admin sayfaları henüz eski tasarımdadır ve sırayla yenilenecektir.
+
 ## Kurulum
 
 ### Ön koşullar
@@ -288,3 +310,4 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Bot sürekli çalışır: Telegram dinleme ve fiyat kontrolü tek süreçte (60 saniyede bir kontrol turu)
 - [x] Panel: "Şimdi kontrol et" düğmesi, bot en fazla 1 dakika içinde işliyor
 - [x] Landing page yenilendi: animasyonlu hero, 3 adımda hazır, kategoriler, planlar, SSS sohbeti ve talep formu
+- [x] Admin paneli yenilendi (1. aşama): koyu tema, gruplu menü ve rozetler, Ctrl+K arama, yeni ana sayfa, Ürünler sayfası ve düzenleme çekmecesi

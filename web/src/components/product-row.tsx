@@ -1,91 +1,26 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { AdminIcon } from "@/components/admin-icons";
+import type { Option, ProductData } from "@/components/product-drawer";
 import {
   deleteProduct,
   requestImmediateCheck,
-  updateProduct,
 } from "@/app/admin/products/actions";
-
-
-type Option = { id: number; name: string };
-
-type Product = {
-  id: number;
-  name: string;
-  url: string;
-  category_id: number;
-  source_id: number;
-  current_price: number | null;
-  currency: string;
-  check_interval_minutes: number;
-  last_checked_at: string | null;
-  last_status: string | null;
-  is_active: boolean;
-  force_check_requested: boolean;
-};
-
-const inputClass =
-  "w-full rounded-lg border border-zinc-300 bg-white px-2 py-1 text-sm text-zinc-900 outline-none focus:border-emerald-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50";
-
-const smallButton =
-  "rounded-lg border border-zinc-300 px-3 py-1 text-xs text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800";
 
 export function ProductRow({
   product,
   categories,
   sources,
+  onEdit,
 }: {
-  product: Product;
+  product: ProductData;
   categories: Option[];
   sources: Option[];
+  onEdit: (product: ProductData) => void;
 }) {
-  const [editing, setEditing] = useState(false);
-  const [name, setName] = useState(product.name);
-  const [url, setUrl] = useState(product.url);
-  const [categoryId, setCategoryId] = useState(String(product.category_id));
-  const [sourceId, setSourceId] = useState(String(product.source_id));
-  const [interval, setInterval] = useState(
-    String(product.check_interval_minutes),
-  );
-  const [isActive, setIsActive] = useState(product.is_active);
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-
-  function startEdit() {
-    setName(product.name);
-    setUrl(product.url);
-    setCategoryId(String(product.category_id));
-    setSourceId(String(product.source_id));
-    setInterval(String(product.check_interval_minutes));
-    setIsActive(product.is_active);
-    setMessage(null);
-    setEditing(true);
-  }
-
-  function cancel() {
-    setMessage(null);
-    setEditing(false);
-  }
-
-  function save() {
-    startTransition(async () => {
-      const result = await updateProduct(product.id, {
-        name,
-        url,
-        categoryId: Number(categoryId),
-        sourceId: Number(sourceId),
-        checkIntervalMinutes: Number(interval),
-        isActive,
-      });
-      if (result.ok) {
-        setMessage(null);
-        setEditing(false);
-      } else {
-        setMessage(result.message ?? "Kaydedilemedi.");
-      }
-    });
-  }
 
   function remove() {
     const ok = confirm(
@@ -112,184 +47,121 @@ export function ProductRow({
 
   const categoryName =
     categories.find((c) => c.id === product.category_id)?.name ?? "-";
-  const sourceName = sources.find((s) => s.id === product.source_id)?.name ?? "-";
+  const sourceName =
+    sources.find((s) => s.id === product.source_id)?.name ?? "-";
 
   const price =
     product.current_price !== null
       ? `${Number(product.current_price).toLocaleString("tr-TR", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })} ${product.currency}`
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })} ${product.currency}`
       : "-";
 
   const lastChecked = product.last_checked_at
     ? new Date(product.last_checked_at).toLocaleString("tr-TR", {
-      dateStyle: "short",
-      timeStyle: "short",
-    })
+        dateStyle: "short",
+        timeStyle: "short",
+      })
     : "Henüz kontrol edilmedi";
 
   const hasError = product.last_status && product.last_status !== "ok";
 
-  if (editing) {
-    return (
-      <tr className="bg-zinc-50 dark:bg-zinc-800/40">
-        <td className="space-y-2 px-4 py-3">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Ürün adı"
-            className={inputClass}
-          />
-          <input
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="Ürün linki"
-            className={inputClass}
-          />
-          {message && <p className="text-xs text-red-600">{message}</p>}
-        </td>
-        <td className="px-4 py-3">
-          <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            className={inputClass}
-          >
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </td>
-        <td className="px-4 py-3">
-          <select
-            value={sourceId}
-            onChange={(e) => setSourceId(e.target.value)}
-            className={inputClass}
-          >
-            {sources.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-        </td>
-        <td className="px-4 py-3 text-zinc-500">{price}</td>
-        <td className="px-4 py-3">
-          <div className="flex items-center gap-1">
-            <input
-              type="number"
-              min={5}
-              value={interval}
-              onChange={(e) => setInterval(e.target.value)}
-              className={`w-20 ${inputClass}`}
-            />
-            <span className="text-xs text-zinc-500">dk</span>
-          </div>
-        </td>
-        <td className="px-4 py-3">
-          <label className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
-            <input
-              type="checkbox"
-              checked={isActive}
-              onChange={(e) => setIsActive(e.target.checked)}
-            />
-            Aktif
-          </label>
-        </td>
-        <td className="px-4 py-3">
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={save}
-              disabled={pending}
-              className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
-            >
-              {pending ? "Kaydediliyor..." : "Kaydet"}
-            </button>
-            <button
-              type="button"
-              onClick={cancel}
-              disabled={pending}
-              className={smallButton}
-            >
-              İptal
-            </button>
-          </div>
-        </td>
-      </tr>
-    );
-  }
+  const status = !product.is_active
+    ? { label: "Pasif", cls: "bg-zinc-700/40 text-zinc-400", dot: false }
+    : hasError
+      ? { label: "Okunamadı", cls: "bg-red-500/15 text-red-400", dot: false }
+      : product.last_status === "ok"
+        ? { label: "Güncel", cls: "bg-emerald-500/15 text-emerald-400", dot: true }
+        : { label: "Sırada", cls: "bg-amber-400/15 text-amber-300", dot: false };
+
+  const iconButton =
+    "grid h-[34px] w-[34px] place-items-center rounded-[10px] border border-zinc-800 bg-zinc-900 text-zinc-500 transition hover:-translate-y-0.5 hover:border-emerald-500 hover:text-emerald-500 disabled:opacity-50";
 
   return (
-    <tr>
+    <tr
+      className={
+        "transition-colors hover:bg-emerald-500/5 " +
+        (product.is_active ? "" : "opacity-60")
+      }
+    >
       <td className="px-4 py-3">
-        <p className="font-medium text-zinc-900 dark:text-zinc-50">
-          {product.name}
+        <p className="font-bold text-zinc-50">{product.name}</p>
+        <p className="text-xs text-zinc-500">
+          {categoryName} · {sourceName}
         </p>
-        <a
-          href={product.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block max-w-xs truncate text-xs text-zinc-500 hover:text-emerald-600"
-        >
-          {product.url}
-        </a>
-        {message && <p className="mt-1 text-xs text-red-600">{message}</p>}
+        {message && <p className="mt-1 text-xs text-red-500">{message}</p>}
       </td>
-      <td className="px-4 py-3 text-zinc-700 dark:text-zinc-300">
-        {categoryName}
-      </td>
-      <td className="px-4 py-3 text-zinc-700 dark:text-zinc-300">
-        {sourceName}
-      </td>
-      <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-50">
+      <td className="px-4 py-3 font-extrabold tabular-nums text-zinc-50">
         {price}
       </td>
-      <td className="px-4 py-3 text-zinc-700 dark:text-zinc-300">
-        {product.check_interval_minutes} dk
+      <td className="px-4 py-3 text-zinc-300">
+        {lastChecked}
+        <p className="text-xs text-zinc-500">
+          her {product.check_interval_minutes} dk
+        </p>
       </td>
-      <td className="px-4 py-3 text-zinc-700 dark:text-zinc-300">
-        {product.is_active ? "Aktif" : "Pasif"}
-        <p className="text-xs text-zinc-500">{lastChecked}</p>
+      <td className="px-4 py-3">
+        <span
+          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold ${status.cls}`}
+        >
+          <i
+            className={
+              "h-1.5 w-1.5 rounded-full bg-current" +
+              (status.dot ? " animate-pulse" : "")
+            }
+          />
+          {status.label}
+        </span>
         {hasError && (
-          <p className="max-w-xs truncate text-xs text-red-600">
+          <p
+            className="mt-1 max-w-xs truncate text-xs text-red-400"
+            title={product.last_status ?? undefined}
+          >
             {product.last_status}
           </p>
         )}
       </td>
       <td className="px-4 py-3">
-        <div className="flex flex-wrap gap-2">
+        <div className="flex items-center justify-end gap-2">
           {product.force_check_requested ? (
-            <span className="rounded-lg border border-amber-300 px-3 py-1 text-xs text-amber-600 dark:border-amber-800 dark:text-amber-500">
-              Kontrol bekleniyor...
+            <span className="inline-flex h-[34px] items-center gap-1.5 rounded-[10px] border border-amber-400/30 px-2.5 text-xs font-bold text-amber-300">
+              <span className="animate-spin">
+                <AdminIcon name="refresh" size={14} />
+              </span>
+              Bekleniyor
             </span>
           ) : (
             <button
               type="button"
               onClick={checkNow}
               disabled={pending}
-              className={smallButton}
+              title="Şimdi kontrol et"
+              aria-label="Şimdi kontrol et"
+              className={iconButton}
             >
-              Şimdi kontrol et
+              <AdminIcon name="refresh" size={16} />
             </button>
           )}
           <button
             type="button"
-            onClick={startEdit}
+            onClick={() => onEdit(product)}
             disabled={pending}
-            className={smallButton}
+            title="Düzenle"
+            aria-label="Düzenle"
+            className={iconButton}
           >
-            Düzenle
+            <AdminIcon name="edit" size={16} />
           </button>
           <button
             type="button"
             onClick={remove}
             disabled={pending}
-            className="rounded-lg border border-red-300 px-3 py-1 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950"
+            title="Sil"
+            aria-label="Sil"
+            className={`${iconButton} hover:!border-red-500 hover:!text-red-400`}
           >
-            {pending ? "..." : "Sil"}
+            <AdminIcon name="trash" size={16} />
           </button>
         </div>
       </td>
