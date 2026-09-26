@@ -17,7 +17,7 @@ Price_Tracker_Bot/
 ├── web/
 │   ├── src/app/admin/     Admin sayfaları (giriş, talepler, müşteri talepleri, müşteriler, kategoriler, kaynaklar, ürünler, takipler, fiyat geçmişi, bildirimler)
 │   ├── src/app/login/     Tek giriş sayfası (admin ve müşteri için)
-│   ├── src/app/portal/    Müşteri portalı (ürünlerim, yeni talep gönderme)
+│   ├── src/app/portal/    Müşteri portalı (ürünlerim, bildirimler, talepler, plan, rapor, kıyas)
 │   ├── src/app/page.tsx   Herkese açık tanıtım sayfası (landing page)
 │   ├── src/lib/supabase/  Supabase bağlantıları (tarayıcı ve sunucu)
 │   ├── src/proxy.ts       Giriş koruması
@@ -108,11 +108,33 @@ talebi otomatik "Tamamlandı" yapar.
 
 ### Müşteri portalı
 
-Hesabı açılan müşteri `/login`'den giriş yapıp `/portal`'a yönlenir. Orada
-sadece kendi takip ettiği ürünleri, güncel fiyatlarını, hedef fiyatlarını ve
-bildirim kuralını görür (salt okunur). Bu erişim veritabanı kurallarıyla
-(RLS) sağlanır: müşteri sadece kendi `customers`, `subscriptions` ve ona bağlı
-`products` satırlarını okuyabilir.
+Hesabı açılan müşteri `/login`'den giriş yapıp `/portal`'a yönlenir. Portal
+koyu temalıdır, masaüstünde yan menü, telefonda alt sekmelerle çalışır
+(`components/portal-shell.tsx`). Sayfalar:
+
+- **Ürünlerim**: özet kutuları, hedefinin altına inen ürün için fırsat bandı,
+  ürün kartları (fiyat grafiği, en düşük/en yüksek fiyat, değişim yüzdesi,
+  hedefe yakınlık), arama, sıralama ve kart/liste görünümü. Sağ kolonda plan
+  kartı, Telegram durumu ve son 3 bildirim.
+- **Bildirimlerim**: Telegram'dan gelen bildirimlerin günlere göre kaydı.
+- **Talep gönder**: kategori ve ürün seçerek talep. Plan sınırı seçim sırasında
+  önizlenir ve aşılırsa gönderilmeden uyarılır. Taleplerin durumu adım adım
+  izlenir (Gönderildi, İnceleniyor, Takibe eklendi).
+- **Planım**: Ücretsiz ve Premium planın karşılaştırması.
+- **Haftalık rapor** ve **Ürün kıyası** (yalnızca Premium): Ücretsiz müşteri
+  kilitli önizleme görür.
+
+Haftalık rapor, `price_daily` görünümündeki günlük son fiyatlardan ve bildirim
+kayıtlarından hesaplanır (son 7 ya da 30 gün). Ürün kıyası, yönetici tarafından
+aynı **alternatif grubuna** (`products.comparison_group`) konulmuş ürünleri yan
+yana gösterir; gruplar admin panelinde ürün düzenlenirken belirlenir. "Destekle
+yaz" ve "Premium için yaz" düğmeleri şimdilik yalnızca görünümdür.
+
+Portalın veritabanı erişimi satır bazlı güvenlik (RLS) kurallarıyla sağlanır:
+müşteri sadece kendi `customers`, `subscriptions`, `customer_requests`,
+`notification_log` ve takip ettiği ürünlerin `price_history` satırlarını
+okuyabilir; ayrıca aktif ürünleri ve aktif kaynakları okuyabilir. Hiçbir tabloya
+yazma yetkisi yoktur (talep göndermek sunucu işleminden geçer).
 
 ### Müşteri talebi ve otomatik takip
 
@@ -154,9 +176,7 @@ başlayan animasyonlar küçük bir `IntersectionObserver` ile tetiklenir, ayarl
 "hareketi azalt" seçiliyse tüm animasyonlar kapanır (`prefers-reduced-motion`).
 
 Hero'daki cihaz ekranlarında görünen ürünler ve fiyatlar örnek veridir, gerçek
-takip verisi değildir. Premium planda görünen "Alternatiflerle fiyat kıyaslama"
-ile "Haftalık ve aylık rapor ve analiz" henüz yapılmamıştır, bu yüzden
-"Yakında" etiketiyle gösterilir.
+takip verisi değildir.
 
 ### Admin paneli tasarımı
 
@@ -282,6 +302,14 @@ Panel `http://localhost:3000` adresinde açılır.
 | `price_history` | Fiyat geçmişi |
 | `notification_log` | Gönderilen bildirim kayıtları |
 
+Ek olarak:
+
+- `products.comparison_group`: aynı grup adını taşıyan ürünler birbirinin
+  alternatifidir (Ürün kıyası bu alanı kullanır).
+- `price_daily` (görünüm): `price_history`'nin günlük son fiyat özeti (Türkiye
+  saatine göre). `security_invoker` ile çalışır, yani sorgulayan kullanıcının
+  RLS izinleri geçerlidir.
+
 ## Fiyat çekme yaklaşımı
 
 Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
@@ -328,3 +356,5 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Admin paneli yenilendi (1. aşama): koyu tema, gruplu menü ve rozetler, Ctrl+K arama, yeni ana sayfa, Ürünler sayfası ve düzenleme çekmecesi
 - [x] Admin paneli yenilendi (2. aşama): Talepler, Müşteri talepleri, Bildirimler, Fiyat geçmişi (grafikli), Kategoriler ve Kaynaklar sayfaları
 - [x] Admin paneli yenilendi (3. aşama): Takipler ve Müşteriler sayfaları, panelden müşteri planı değiştirme
+- [x] Müşteri portalı yenilendi: koyu tema, yan menü, geniş ürün sayfası, bildirimler, gelişmiş talep formu, Planım
+- [x] Premium: Haftalık ve aylık rapor ile Alternatiflerle ürün kıyası (alternatifler admin panelinde "Alternatif grubu" ile tanımlanır)

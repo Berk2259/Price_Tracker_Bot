@@ -1,5 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { CustomerRequestForm } from "@/components/customer-request-form";
+import {
+  PortalRequestCard,
+  type PortalRequest,
+} from "@/components/portal-request-card";
 
 type RequestRow = {
   id: number;
@@ -7,21 +11,14 @@ type RequestRow = {
   status: string;
   created_at: string;
   categories: { name: string } | { name: string }[] | null;
-  customer_request_products: { products: { name: string } | { name: string }[] | null }[];
+  customer_request_products: {
+    products: { name: string } | { name: string }[] | null;
+  }[];
 };
 
-const STATUS_LABEL: Record<string, string> = {
-  bekliyor: "Bekliyor",
-  inceleniyor: "İnceleniyor",
-  tamamlandi: "Tamamlandı",
-  reddedildi: "Reddedildi",
-};
-
-const STATUS_COLOR: Record<string, string> = {
-  bekliyor: "text-zinc-500",
-  inceleniyor: "text-amber-600",
-  tamamlandi: "text-emerald-600",
-  reddedildi: "text-red-600",
+type FollowedRow = {
+  product_id: number;
+  products: { category_id: number } | { category_id: number }[] | null;
 };
 
 function oneName(value: { name: string } | { name: string }[] | null): string {
@@ -37,13 +34,16 @@ export default async function CustomerRequestsPage() {
 
   const { data: customer } = await supabase
     .from("customers")
-    .select("id")
+    .select("id, plan")
     .eq("auth_user_id", user?.id ?? "")
     .maybeSingle();
 
-  const [categories, products, requests] = await Promise.all([
+  const [categories, products, requests, followed] = await Promise.all([
     supabase.from("categories").select("id, name").order("name"),
-    supabase.from("products").select("id, name, category_id").eq("is_active", true),
+    supabase
+      .from("products")
+      .select("id, name, category_id, current_price, currency")
+      .eq("is_active", true),
     customer
       ? supabase
           .from("customer_requests")
@@ -53,63 +53,78 @@ export default async function CustomerRequestsPage() {
           .eq("customer_id", customer.id)
           .order("created_at", { ascending: false })
       : Promise.resolve({ data: [] as RequestRow[] }),
+    customer
+      ? supabase
+          .from("subscriptions")
+          .select("product_id, products(category_id)")
+          .eq("customer_id", customer.id)
+      : Promise.resolve({ data: [] as FollowedRow[] }),
   ]);
 
-  const requestList = (requests.data ?? []) as RequestRow[];
+  const productList = products.data ?? [];
+  const followedRows = (followed.data ?? []) as FollowedRow[];
+
+  const followedProductIds = followedRows.map((f) => f.product_id);
+  const followedCategoryIds = [
+    ...new Set(
+      followedRows
+        .map((f) =>
+          Array.isArray(f.products) ? f.products[0]?.category_id : f.products?.category_id,
+        )
+        .filter((id): id is number => typeof id === "number"),
+    ),
+  ];
+
+  const categoryList = (categories.data ?? []).map((c) => ({
+    id: c.id,
+    name: c.name,
+    productCount: productList.filter((p) => p.category_id === c.id).length,
+  }));
+
+  const requestList: PortalRequest[] = ((requests.data ?? []) as RequestRow[]).map(
+    (r) => ({
+      id: r.id,
+      category: oneName(r.categories),
+      products: r.customer_request_products.map((cp) => oneName(cp.products)),
+      note: r.note,
+      status: r.status,
+      date: new Date(r.created_at).toLocaleDateString("tr-TR"),
+    }),
+  );
 
   return (
-    <div className="space-y-10">
-      <div>
-        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
+    <div>
+      <div className="ad-in">
+        <h1 className="text-[26px] font-bold tracking-[-0.02em]">
           Yeni talep gönder
         </h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          Takip etmek istediğiniz kategori ve ürünleri seçin, size dönüş
-          yapalım.
+        <p className="mt-1 text-zinc-500">
+          Takip etmek istediğin ürünleri seç, ekibimiz inceleyip takibe ekler.
         </p>
-        <div className="mt-4">
-          <CustomerRequestForm
-            categories={categories.data ?? []}
-            products={products.data ?? []}
-          />
-        </div>
       </div>
 
-      <div>
-        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-          Taleplerim
-        </h2>
-        <div className="mt-4 space-y-3">
-          {requestList.map((r) => (
-            <div
-              key={r.id}
-              className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
-            >
-              <div className="flex items-center justify-between">
-                <p className="font-medium text-zinc-900 dark:text-zinc-50">
-                  {oneName(r.categories)}
-                </p>
-                <span className={`text-xs ${STATUS_COLOR[r.status] ?? ""}`}>
-                  {STATUS_LABEL[r.status] ?? r.status}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-zinc-500">
-                {r.customer_request_products
-                  .map((cp) => oneName(cp.products))
-                  .join(", ")}
-              </p>
-              {r.note && (
-                <p className="mt-1 text-xs text-zinc-500">Not: {r.note}</p>
-              )}
-              <p className="mt-1 text-xs text-zinc-400">
-                {new Date(r.created_at).toLocaleDateString("tr-TR")}
-              </p>
-            </div>
-          ))}
-          {requestList.length === 0 && (
-            <p className="text-sm text-zinc-500">Henüz talep göndermediniz.</p>
-          )}
-        </div>
+      <CustomerRequestForm
+        categories={categoryList}
+        products={productList}
+        followedProductIds={followedProductIds}
+        followedCategoryIds={followedCategoryIds}
+        plan={customer?.plan ?? "free"}
+      />
+
+      <h2 className="mb-1 mt-9 text-lg font-bold">Taleplerim</h2>
+      <div className="grid gap-3">
+        {requestList.map((r, i) => (
+          <div
+            key={r.id}
+            className="ad-in"
+            style={{ "--i": Math.min(i, 8) } as React.CSSProperties}
+          >
+            <PortalRequestCard request={r} />
+          </div>
+        ))}
+        {requestList.length === 0 && (
+          <p className="text-sm text-zinc-500">Henüz talep göndermediniz.</p>
+        )}
       </div>
     </div>
   );

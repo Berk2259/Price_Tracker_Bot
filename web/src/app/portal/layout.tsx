@@ -1,61 +1,58 @@
 import { createClient } from "@/lib/supabase/server";
-import { LogoutButton } from "@/components/logout-button";
-import { planLabel } from "@/lib/plan-limits";
-import Link from "next/link";
+import { PortalShell } from "@/components/portal-shell";
 
 export default async function PortalLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    const supabase = await createClient();
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    const { data: customer } = await supabase
-        .from("customers")
-        .select("name, plan")
-        .eq("auth_user_id", user?.id ?? "")
-        .maybeSingle();
+  const { data: customer } = await supabase
+    .from("customers")
+    .select("id, name, plan, telegram_chat_id, link_token")
+    .eq("auth_user_id", user?.id ?? "")
+    .maybeSingle();
 
+  if (!customer) {
     return (
-        <div className="min-h-screen">
-            <header className="border-b border-zinc-200 dark:border-zinc-800">
-                <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
-                    <div className="flex items-center gap-6">
-                        <div>
-                            <p className="font-semibold text-zinc-900 dark:text-zinc-50">
-                                Fiyat Takip Botu
-                            </p>
-                            {customer && (
-                                <p className="text-xs text-zinc-500">
-                                    {customer.name} · {planLabel(customer.plan)} plan
-                                </p>
-                            )}
-                        </div>
-                        <nav className="flex gap-4 text-sm">
-                            <Link href="/portal" className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50">
-                                Ürünlerim
-                            </Link>
-                            <Link href="/portal/requests" className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50">
-                                Talep gönder
-                            </Link>
-                        </nav>
-                    </div>
-                    <LogoutButton />
-                </div>
-            </header>
-            <main className="mx-auto max-w-3xl px-4 py-8">
-                {customer ? (
-                    children
-                ) : (
-                    <p className="text-sm text-red-600">
-                        Bu hesaba bağlı bir müşteri kaydı bulunamadı. Lütfen yönetici ile
-                        iletişime geçin.
-                    </p>
-                )}
-            </main>
-        </div>
+      <div className="force-dark grid min-h-screen place-items-center bg-zinc-950 px-4 text-zinc-50">
+        <p className="max-w-md text-center text-sm text-red-400">
+          Bu hesaba bağlı bir müşteri kaydı bulunamadı. Lütfen yönetici ile
+          iletişime geçin.
+        </p>
+      </div>
     );
+  }
+
+  // Menüdeki rozet: henüz sonuçlanmamış taleplerim.
+  const pending = await supabase
+    .from("customer_requests")
+    .select("*", { count: "exact", head: true })
+    .eq("customer_id", customer.id)
+    .in("status", ["bekliyor", "inceleniyor"]);
+
+  const botUsername = process.env.TELEGRAM_BOT_USERNAME;
+  const bound = !!customer.telegram_chat_id;
+  const linkUrl =
+    !bound && botUsername && customer.link_token
+      ? `https://t.me/${botUsername}?start=${customer.link_token}`
+      : null;
+
+  return (
+    <div className="force-dark">
+      <PortalShell
+        name={customer.name}
+        plan={customer.plan ?? "free"}
+        bound={bound}
+        linkUrl={linkUrl}
+        pending={pending.count ?? 0}
+      >
+        {children}
+      </PortalShell>
+    </div>
+  );
 }

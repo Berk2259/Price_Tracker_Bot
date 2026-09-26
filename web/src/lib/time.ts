@@ -66,3 +66,17 @@ export function shortDateTime(iso: string): string {
     minute: "2-digit",
   });
 }
+
+// Türkiye saatine göre gün anahtarı: "2026-09-26".
+export function istanbulDayKey(d: Date): string {
+  return d.toLocaleDateString("en-CA", { timeZone: TIME_ZONE });
+}
+
+// Bugünle biten son n günün anahtarları (eskiden yeniye).
+export function lastDayKeys(n: number): string[] {
+  const keys: string[] = [];
+  for (let i = n - 1; i >= 0; i--) {
+    keys.push(istanbulDayKey(new Date(Date.now() - i * 24 * 60 * 60 * 1000)));
+  }
+  return keys;
+}
