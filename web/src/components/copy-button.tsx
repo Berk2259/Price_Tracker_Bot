@@ -15,9 +15,9 @@ export function CopyButton({ text }: { text: string }) {
     <button
       type="button"
       onClick={copy}
-      className="rounded-lg border border-zinc-300 px-3 py-1 text-xs text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+      className="rounded-[10px] border border-emerald-500/40 px-3 py-1.5 text-xs font-bold text-emerald-400 transition hover:bg-emerald-500/10"
     >
-      {copied ? "Kopyalandı" : "Linki kopyala"}
+      {copied ? "Kopyalandı ✓" : "Bağlama linkini kopyala"}
     </button>
   );
 }

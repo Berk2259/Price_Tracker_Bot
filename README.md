@@ -177,7 +177,6 @@ içinde gri ve yeşil paletin yeniden tanımlanmasıyla (koyu turkuaz) verilir.
 - **Ürünler**: arama, durum filtreleri (Hatalı, Sırada, Pasif), durum rozetleri
   ve tek tıkla "şimdi kontrol et". Ürün ekleme ve düzenleme sağdan açılan
   çekmecede yapılır (`product-drawer.tsx`).
-
 - **Talepler ve Müşteri talepleri**: gelen kutusu düzeni; durum filtreleri,
   arama ve renkli durum seçicisi. Talepler sayfasında "Hesap aç" kartın içinde
   açılır.
@@ -187,8 +186,14 @@ içinde gri ve yeşil paletin yeniden tanımlanmasıyla (koyu turkuaz) verilir.
   fiyat grafiği (güncel, en düşük, en yüksek, toplam değişim).
 - **Kategoriler ve Kaynaklar**: kart görünümü; her kartta bağlı ürün (ve
   kategoride müşteri) sayısı. Bağlı ürünü olan kategori ya da kaynak silinemez.
+- **Takipler**: müşteriye göre gruplu kartlar; her müşteride Telegram durumu
+  (bağlı değilse bildirim gidemediği belirtilir), ürünün güncel fiyatı ve
+  hedefe uzaklığı. Ekleme ve düzenleme sağdan açılan çekmecede yapılır.
+- **Müşteriler**: kart görünümü; plan (Ücretsiz/Premium) düzenleme çekmecesinden
+  değiştirilebilir, bağlı olmayan müşterinin bağlama linki karttan kopyalanır.
+  Kartta kategoriler, takip sayısı ve müşterinin bildirimlerine kısayol vardır.
 
-Müşteriler ve Takipler sayfaları henüz eski tasarımdadır ve sırayla yenilenecektir.
+Tüm admin sayfaları yenilenmiştir.
 
 ## Kurulum
 
@@ -322,3 +327,4 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Landing page yenilendi: animasyonlu hero, 3 adımda hazır, kategoriler, planlar, SSS sohbeti ve talep formu
 - [x] Admin paneli yenilendi (1. aşama): koyu tema, gruplu menü ve rozetler, Ctrl+K arama, yeni ana sayfa, Ürünler sayfası ve düzenleme çekmecesi
 - [x] Admin paneli yenilendi (2. aşama): Talepler, Müşteri talepleri, Bildirimler, Fiyat geçmişi (grafikli), Kategoriler ve Kaynaklar sayfaları
+- [x] Admin paneli yenilendi (3. aşama): Takipler ve Müşteriler sayfaları, panelden müşteri planı değiştirme

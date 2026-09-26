@@ -25,6 +25,7 @@ export async function updateCustomer(
   id: number,
   input: {
     name: string;
+    plan: string;
     telegramChatId: string;
     isActive: boolean;
     categoryIds: number[];
@@ -37,6 +38,9 @@ export async function updateCustomer(
   if (!name) {
     return { ok: false, message: "Ad boş olamaz." };
   }
+  if (input.plan !== "free" && input.plan !== "premium") {
+    return { ok: false, message: "Geçersiz plan." };
+  }
   if (telegramChatId !== null && !Number.isInteger(telegramChatId)) {
     return { ok: false, message: "Chat ID sayı olmalı." };
   }
@@ -46,6 +50,7 @@ export async function updateCustomer(
     .from("customers")
     .update({
       name,
+      plan: input.plan,
       is_active: input.isActive,
       telegram_chat_id: telegramChatId,
     })
