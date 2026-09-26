@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { AdminIcon } from "@/components/admin-icons";
+import { STATUS_OPTIONS } from "@/components/lead-row";
 import { updateCustomerRequestStatus } from "@/app/admin/customer-requests/actions";
 
-type CustomerRequest = {
+export type CustomerRequest = {
   id: number;
   note: string | null;
   status: string;
@@ -11,24 +13,8 @@ type CustomerRequest = {
   customerName: string;
   categoryName: string;
   productNames: string[];
+  ago: string;
 };
-
-const STATUS_OPTIONS = [
-  { value: "bekliyor", label: "Bekliyor" },
-  { value: "inceleniyor", label: "İnceleniyor" },
-  { value: "tamamlandi", label: "Tamamlandı" },
-  { value: "reddedildi", label: "Reddedildi" },
-];
-
-const STATUS_COLOR: Record<string, string> = {
-  bekliyor: "text-zinc-500",
-  inceleniyor: "text-amber-600",
-  tamamlandi: "text-emerald-600",
-  reddedildi: "text-red-600",
-};
-
-const selectClass =
-  "rounded-lg border border-zinc-300 bg-white px-2 py-1 text-xs text-zinc-900 outline-none focus:border-emerald-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50";
 
 export function CustomerRequestRow({ request }: { request: CustomerRequest }) {
   const [status, setStatus] = useState(request.status);
@@ -49,31 +35,63 @@ export function CustomerRequestRow({ request }: { request: CustomerRequest }) {
     });
   }
 
-  const createdAt = new Date(request.created_at).toLocaleString("tr-TR", {
-    dateStyle: "short",
-    timeStyle: "short",
-  });
+  const statusStyle =
+    STATUS_OPTIONS.find((s) => s.value === status)?.cls ?? "";
 
   return (
-    <tr>
-      <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-50">
-        {request.customerName}
-      </td>
-      <td className="px-4 py-3 text-zinc-700 dark:text-zinc-300">
-        {request.categoryName}
-      </td>
-      <td className="max-w-xs px-4 py-3 text-sm text-zinc-700 dark:text-zinc-300">
-        {request.productNames.join(", ") || "-"}
-      </td>
-      <td className="max-w-xs px-4 py-3 text-xs text-zinc-500">
-        {request.note ?? "-"}
-      </td>
-      <td className="px-4 py-3">
+    <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-[18px] transition-colors hover:border-emerald-500/40">
+      <div className="flex flex-wrap items-start gap-3.5">
+        <span className="grid h-10 w-10 flex-none place-items-center rounded-full bg-emerald-500/15 text-base font-extrabold text-emerald-400">
+          {(request.customerName.trim()[0] ?? "?").toUpperCase()}
+        </span>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <b className="text-[15px] text-zinc-50">{request.customerName}</b>
+            <span className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-bold text-emerald-400">
+              {request.categoryName}
+            </span>
+            <small className="text-zinc-500">{request.ago}</small>
+          </div>
+
+          {request.productNames.length > 0 ? (
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
+              {request.productNames.map((name, i) => (
+                <span
+                  key={`${name}-${i}`}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-950 px-2.5 py-1 text-xs text-zinc-300"
+                >
+                  <AdminIcon name="package" size={13} />
+                  {name}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-2 text-xs text-zinc-500">Ürün seçilmemiş.</p>
+          )}
+
+          {request.note && (
+            <p className="mt-2.5 rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-300">
+              “{request.note}”
+            </p>
+          )}
+
+          {status === "tamamlandi" && request.productNames.length > 0 && (
+            <p className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400">
+              <AdminIcon name="check" size={13} stroke={3} />
+              Seçilen ürünler müşterinin takibine eklendi.
+            </p>
+          )}
+
+          {message && <p className="mt-2 text-xs text-red-500">{message}</p>}
+        </div>
+
         <select
           value={status}
           onChange={(e) => changeStatus(e.target.value)}
           disabled={pending}
-          className={`${selectClass} ${STATUS_COLOR[status] ?? ""}`}
+          aria-label="Durum"
+          className={`cursor-pointer rounded-full border-0 px-3 py-1.5 text-xs font-bold outline-none disabled:opacity-60 ${statusStyle}`}
         >
           {STATUS_OPTIONS.map((s) => (
             <option key={s.value} value={s.value}>
@@ -81,9 +99,7 @@ export function CustomerRequestRow({ request }: { request: CustomerRequest }) {
             </option>
           ))}
         </select>
-        {message && <p className="mt-1 text-xs text-red-600">{message}</p>}
-      </td>
-      <td className="px-4 py-3 text-zinc-500">{createdAt}</td>
-    </tr>
+      </div>
+    </div>
   );
 }
