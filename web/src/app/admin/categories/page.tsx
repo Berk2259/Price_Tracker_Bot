@@ -1,52 +1,58 @@
 import { createClient } from "@/lib/supabase/server";
+import { dayLabel } from "@/lib/time";
 import { AddCategoryForm } from "@/components/add-category-form";
 import { CategoryRow } from "@/components/category-row";
 
 export default async function CategoriesPage() {
   const supabase = await createClient();
 
-  const { data: categories, error } = await supabase
-    .from("categories")
-    .select("id, name, created_at")
-    .order("id");
+  const [categories, products, links] = await Promise.all([
+    supabase.from("categories").select("id, name, created_at").order("id"),
+    supabase.from("products").select("category_id"),
+    supabase.from("customer_categories").select("category_id"),
+  ]);
+
+  const count = (rows: { category_id: number }[] | null, id: number) =>
+    (rows ?? []).filter((r) => r.category_id === id).length;
+
+  const items = (categories.data ?? []).map((c) => ({
+    id: c.id,
+    name: c.name,
+    added: dayLabel(c.created_at),
+    productCount: count(products.data, c.id),
+    customerCount: count(links.data, c.id),
+  }));
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
+      <h1 className="text-2xl font-bold tracking-[-0.02em] text-zinc-50">
         Kategoriler
       </h1>
       <p className="mt-1 text-sm text-zinc-500">
         Ürünlerin ve müşterilerin ilgi alanlarını gruplayan kategoriler.
       </p>
 
-      {error && (
-        <p className="mt-6 text-sm text-red-600">Kategoriler alınamadı.</p>
+      {(categories.error || products.error || links.error) && (
+        <p className="mt-6 text-sm text-red-600">Veriler alınamadı.</p>
       )}
 
       <AddCategoryForm />
 
-      <div className="mt-6 overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-800">
-            <tr>
-              <th className="px-4 py-3 font-medium">Ad</th>
-              <th className="px-4 py-3 font-medium">Eklenme</th>
-              <th className="px-4 py-3 font-medium">İşlemler</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
-            {categories?.map((category) => (
-              <CategoryRow key={category.id} category={category} />
-            ))}
-            {categories?.length === 0 && (
-              <tr>
-                <td colSpan={3} className="px-4 py-6 text-center text-zinc-500">
-                  Henüz kategori yok.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <div className="mt-6 grid gap-3.5 sm:grid-cols-2 xl:grid-cols-3">
+        {items.map((category, i) => (
+          <div
+            key={category.id}
+            className="ad-in"
+            style={{ "--i": Math.min(i, 8) } as React.CSSProperties}
+          >
+            <CategoryRow category={category} />
+          </div>
+        ))}
+        {items.length === 0 && (
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 px-4 py-10 text-center text-zinc-500 sm:col-span-2 xl:col-span-3">
+            Henüz kategori yok.
+          </div>
+        )}
       </div>
     </div>
   );

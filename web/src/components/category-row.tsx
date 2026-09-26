@@ -1,14 +1,21 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { AdminIcon } from "@/components/admin-icons";
 import { deleteCategory, updateCategory } from "@/app/admin/categories/actions";
 
-type Category = { id: number; name: string; created_at: string };
+export type CategoryItem = {
+  id: number;
+  name: string;
+  added: string;
+  productCount: number;
+  customerCount: number;
+};
 
-const smallButton =
-  "rounded-lg border border-zinc-300 px-3 py-1 text-xs text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800";
+const iconButton =
+  "grid h-[34px] w-[34px] place-items-center rounded-[10px] border border-zinc-800 bg-zinc-900 text-zinc-500 transition hover:-translate-y-0.5 hover:border-emerald-500 hover:text-emerald-500 disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:border-zinc-800 disabled:hover:text-zinc-500";
 
-export function CategoryRow({ category }: { category: Category }) {
+export function CategoryRow({ category }: { category: CategoryItem }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(category.name);
   const [message, setMessage] = useState<string | null>(null);
@@ -51,73 +58,102 @@ export function CategoryRow({ category }: { category: Category }) {
     });
   }
 
-  const createdAt = new Date(category.created_at).toLocaleDateString("tr-TR");
-
-  if (editing) {
-    return (
-      <tr className="bg-zinc-50 dark:bg-zinc-800/40">
-        <td className="px-4 py-3">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 bg-white px-2 py-1 text-sm text-zinc-900 outline-none focus:border-emerald-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
-          />
-          {message && <p className="mt-1 text-xs text-red-600">{message}</p>}
-        </td>
-        <td className="px-4 py-3 text-zinc-500">{createdAt}</td>
-        <td className="px-4 py-3">
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={save}
-              disabled={pending}
-              className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
-            >
-              {pending ? "Kaydediliyor..." : "Kaydet"}
-            </button>
-            <button
-              type="button"
-              onClick={cancel}
-              disabled={pending}
-              className={smallButton}
-            >
-              İptal
-            </button>
-          </div>
-        </td>
-      </tr>
-    );
-  }
+  const hasProducts = category.productCount > 0;
 
   return (
-    <tr>
-      <td className="px-4 py-3">
-        <span className="font-medium text-zinc-900 dark:text-zinc-50">
-          {category.name}
+    <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-[18px] transition-colors hover:border-emerald-500/40">
+      <div className="flex items-start gap-3">
+        <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-emerald-500/15 text-emerald-400">
+          <AdminIcon name="tag" size={18} />
         </span>
-        {message && <p className="mt-1 text-xs text-red-600">{message}</p>}
-      </td>
-      <td className="px-4 py-3 text-zinc-500">{createdAt}</td>
-      <td className="px-4 py-3">
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={startEdit}
-            disabled={pending}
-            className={smallButton}
-          >
-            Düzenle
-          </button>
-          <button
-            type="button"
-            onClick={remove}
-            disabled={pending}
-            className="rounded-lg border border-red-300 px-3 py-1 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950"
-          >
-            {pending ? "..." : "Sil"}
-          </button>
+
+        <div className="min-w-0 flex-1">
+          {editing ? (
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") save();
+                if (e.key === "Escape") cancel();
+              }}
+              autoFocus
+              className="w-full rounded-[10px] border border-zinc-800 bg-zinc-950 px-2.5 py-1.5 text-sm text-zinc-50 outline-none focus:border-emerald-500"
+            />
+          ) : (
+            <b className="block truncate text-[15px] text-zinc-50">
+              {category.name}
+            </b>
+          )}
+          <small className="text-zinc-500">Eklenme: {category.added}</small>
         </div>
-      </td>
-    </tr>
+
+        <div className="flex gap-1.5">
+          {editing ? (
+            <>
+              <button
+                type="button"
+                onClick={save}
+                disabled={pending}
+                title="Kaydet"
+                aria-label="Kaydet"
+                className={iconButton}
+              >
+                <AdminIcon name="check" size={16} stroke={3} />
+              </button>
+              <button
+                type="button"
+                onClick={cancel}
+                disabled={pending}
+                title="İptal"
+                aria-label="İptal"
+                className={iconButton}
+              >
+                <AdminIcon name="x" size={16} />
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={startEdit}
+                disabled={pending}
+                title="Adı düzenle"
+                aria-label="Adı düzenle"
+                className={iconButton}
+              >
+                <AdminIcon name="edit" size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={remove}
+                disabled={pending || hasProducts}
+                title={
+                  hasProducts
+                    ? "Bağlı ürünler var, önce onları taşı ya da sil"
+                    : "Sil"
+                }
+                aria-label="Sil"
+                className={iconButton}
+              >
+                <AdminIcon name="trash" size={16} />
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        <span className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-950 px-2.5 py-1 text-xs text-zinc-300">
+          <AdminIcon name="package" size={13} />
+          {category.productCount} ürün
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-950 px-2.5 py-1 text-xs text-zinc-300">
+          <AdminIcon name="users" size={13} />
+          {category.customerCount} müşteri
+        </span>
+      </div>
+
+      {message && <p className="mt-3 text-xs text-red-500">{message}</p>}
+    </div>
   );
 }

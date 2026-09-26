@@ -1,24 +1,21 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { AdminIcon } from "@/components/admin-icons";
 import { deleteNotification } from "@/app/admin/notifications/actions";
 
-type Notification = {
+export type NotificationItem = {
   id: number;
-  message: string;
-  sent_at: string;
-};
-
-export function NotificationRow({
-  notification,
-  customerName,
-  productName,
-}: {
-  notification: Notification;
+  customerId: number;
   customerName: string;
   productName: string;
-}) {
-  const [message, setMessage] = useState<string | null>(null);
+  message: string;
+  day: string;
+  time: string;
+};
+
+export function NotificationRow({ item }: { item: NotificationItem }) {
+  const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   function remove() {
@@ -26,41 +23,43 @@ export function NotificationRow({
     if (!ok) return;
 
     startTransition(async () => {
-      const result = await deleteNotification(notification.id);
+      const result = await deleteNotification(item.id);
       if (!result.ok) {
-        setMessage(result.message ?? "Silinemedi.");
+        setError(result.message ?? "Silinemedi.");
       }
     });
   }
 
-  const sentAt = new Date(notification.sent_at).toLocaleString("tr-TR", {
-    dateStyle: "short",
-    timeStyle: "short",
-  });
-
   return (
-    <tr>
-      <td className="px-4 py-3 text-zinc-500">{sentAt}</td>
-      <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-50">
-        {customerName}
-      </td>
-      <td className="px-4 py-3 text-zinc-700 dark:text-zinc-300">
-        {productName}
-      </td>
-      <td className="max-w-md whitespace-pre-line px-4 py-3 text-xs text-zinc-600 dark:text-zinc-400">
-        {notification.message}
-      </td>
-      <td className="px-4 py-3">
-        <button
-          type="button"
-          onClick={remove}
-          disabled={pending}
-          className="rounded-lg border border-red-300 px-3 py-1 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950"
-        >
-          {pending ? "..." : "Sil"}
-        </button>
-        {message && <p className="mt-1 text-xs text-red-600">{message}</p>}
-      </td>
-    </tr>
+    <div className="flex items-start gap-3.5 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 transition-colors hover:border-emerald-500/40">
+      <span className="grid h-10 w-10 flex-none place-items-center rounded-full bg-emerald-500/15 text-emerald-400">
+        <AdminIcon name="send" size={17} />
+      </span>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-baseline gap-x-2">
+          <b className="text-[15px] text-zinc-50">{item.productName}</b>
+          <span className="text-sm text-zinc-500">→ {item.customerName}</span>
+          <small className="ml-auto text-zinc-500">{item.time}</small>
+        </div>
+
+        <div className="mt-2 whitespace-pre-line rounded-xl rounded-tl-sm border border-zinc-800 bg-zinc-950 px-3.5 py-2.5 text-sm text-zinc-300">
+          {item.message}
+        </div>
+
+        {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
+      </div>
+
+      <button
+        type="button"
+        onClick={remove}
+        disabled={pending}
+        title="Sil"
+        aria-label="Sil"
+        className="grid h-[34px] w-[34px] flex-none place-items-center rounded-[10px] border border-zinc-800 bg-zinc-900 text-zinc-500 transition hover:-translate-y-0.5 hover:border-red-500 hover:text-red-400 disabled:opacity-50"
+      >
+        <AdminIcon name="trash" size={16} />
+      </button>
+    </div>
   );
 }

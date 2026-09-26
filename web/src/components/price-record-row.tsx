@@ -1,23 +1,20 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { AdminIcon } from "@/components/admin-icons";
 import { deletePriceRecord } from "@/app/admin/price-history/actions";
 
-type PriceRecord = {
+export type PriceItem = {
   id: number;
+  productName: string;
   price: number;
   currency: string;
-  in_stock: boolean | null;
-  checked_at: string;
+  inStock: boolean | null;
+  when: string;
+  changePct: number | null;
 };
 
-export function PriceRecordRow({
-  record,
-  productName,
-}: {
-  record: PriceRecord;
-  productName: string;
-}) {
+export function PriceRecordRow({ item }: { item: PriceItem }) {
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -26,43 +23,79 @@ export function PriceRecordRow({
     if (!ok) return;
 
     startTransition(async () => {
-      const result = await deletePriceRecord(record.id);
+      const result = await deletePriceRecord(item.id);
       if (!result.ok) {
         setMessage(result.message ?? "Silinemedi.");
       }
     });
   }
 
-  const price = `${Number(record.price).toLocaleString("tr-TR", {
+  const price = `${item.price.toLocaleString("tr-TR", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  })} ${record.currency}`;
+  })} ${item.currency}`;
 
-  const checkedAt = new Date(record.checked_at).toLocaleString("tr-TR", {
-    dateStyle: "short",
-    timeStyle: "short",
-  });
+  const change =
+    item.changePct === null
+      ? { text: "—", cls: "text-zinc-500" }
+      : Math.abs(item.changePct) < 0.005
+        ? { text: "değişmedi", cls: "bg-zinc-700/40 text-zinc-400" }
+        : item.changePct < 0
+          ? {
+              text: `↓ %${Math.abs(item.changePct).toFixed(1).replace(".", ",")}`,
+              cls: "bg-emerald-500/15 text-emerald-400",
+            }
+          : {
+              text: `↑ %${item.changePct.toFixed(1).replace(".", ",")}`,
+              cls: "bg-red-500/15 text-red-400",
+            };
 
   return (
-    <tr>
-      <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-50">
-        {productName}
+    <tr className="transition-colors hover:bg-emerald-500/5">
+      <td className="px-4 py-3 text-zinc-500">{item.when}</td>
+      <td className="px-4 py-3 font-bold text-zinc-50">{item.productName}</td>
+      <td className="px-4 py-3 font-extrabold tabular-nums text-zinc-50">
+        {price}
       </td>
-      <td className="px-4 py-3 text-zinc-900 dark:text-zinc-50">{price}</td>
-      <td className="px-4 py-3 text-zinc-700 dark:text-zinc-300">
-        {record.in_stock === null ? "-" : record.in_stock ? "Stokta" : "Yok"}
-      </td>
-      <td className="px-4 py-3 text-zinc-500">{checkedAt}</td>
       <td className="px-4 py-3">
-        <button
-          type="button"
-          onClick={remove}
-          disabled={pending}
-          className="rounded-lg border border-red-300 px-3 py-1 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950"
+        <span
+          className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-bold ${change.cls}`}
         >
-          {pending ? "..." : "Sil"}
-        </button>
-        {message && <p className="mt-1 text-xs text-red-600">{message}</p>}
+          {change.text}
+        </span>
+      </td>
+      <td className="px-4 py-3">
+        {item.inStock === null ? (
+          <span className="text-zinc-500">-</span>
+        ) : (
+          <span
+            className={
+              "inline-block rounded-full px-2.5 py-0.5 text-xs font-bold " +
+              (item.inStock
+                ? "bg-emerald-500/15 text-emerald-400"
+                : "bg-red-500/15 text-red-400")
+            }
+          >
+            {item.inStock ? "Stokta" : "Yok"}
+          </span>
+        )}
+      </td>
+      <td className="px-4 py-3">
+        <div className="flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={remove}
+            disabled={pending}
+            title="Sil"
+            aria-label="Sil"
+            className="grid h-[34px] w-[34px] place-items-center rounded-[10px] border border-zinc-800 bg-zinc-900 text-zinc-500 transition hover:-translate-y-0.5 hover:border-red-500 hover:text-red-400 disabled:opacity-50"
+          >
+            <AdminIcon name="trash" size={16} />
+          </button>
+        </div>
+        {message && (
+          <p className="mt-1 text-right text-xs text-red-500">{message}</p>
+        )}
       </td>
     </tr>
   );

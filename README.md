@@ -178,7 +178,17 @@ içinde gri ve yeşil paletin yeniden tanımlanmasıyla (koyu turkuaz) verilir.
   ve tek tıkla "şimdi kontrol et". Ürün ekleme ve düzenleme sağdan açılan
   çekmecede yapılır (`product-drawer.tsx`).
 
-Diğer admin sayfaları henüz eski tasarımdadır ve sırayla yenilenecektir.
+- **Talepler ve Müşteri talepleri**: gelen kutusu düzeni; durum filtreleri,
+  arama ve renkli durum seçicisi. Talepler sayfasında "Hesap aç" kartın içinde
+  açılır.
+- **Bildirimler**: günlere göre gruplanmış akış, mesajlar Telegram balonu
+  şeklinde, müşteri seçici ve arama.
+- **Fiyat geçmişi**: her kaydın bir önceki kayda göre değişimi, ürün seçilince
+  fiyat grafiği (güncel, en düşük, en yüksek, toplam değişim).
+- **Kategoriler ve Kaynaklar**: kart görünümü; her kartta bağlı ürün (ve
+  kategoride müşteri) sayısı. Bağlı ürünü olan kategori ya da kaynak silinemez.
+
+Müşteriler ve Takipler sayfaları henüz eski tasarımdadır ve sırayla yenilenecektir.
 
 ## Kurulum
 
@@ -311,3 +321,4 @@ Her kaynak için ayrı "adapter" yazılır. Yöntem önceliği:
 - [x] Panel: "Şimdi kontrol et" düğmesi, bot en fazla 1 dakika içinde işliyor
 - [x] Landing page yenilendi: animasyonlu hero, 3 adımda hazır, kategoriler, planlar, SSS sohbeti ve talep formu
 - [x] Admin paneli yenilendi (1. aşama): koyu tema, gruplu menü ve rozetler, Ctrl+K arama, yeni ana sayfa, Ürünler sayfası ve düzenleme çekmecesi
+- [x] Admin paneli yenilendi (2. aşama): Talepler, Müşteri talepleri, Bildirimler, Fiyat geçmişi (grafikli), Kategoriler ve Kaynaklar sayfaları

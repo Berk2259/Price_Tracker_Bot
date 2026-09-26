@@ -1,24 +1,26 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { AdminIcon } from "@/components/admin-icons";
 import { deleteSource, updateSource } from "@/app/admin/sources/actions";
 import { SOURCE_METHODS, methodLabel } from "@/lib/source-methods";
 
-type Source = {
+export type SourceItem = {
   id: number;
   name: string;
   method: string;
   base_url: string | null;
   is_active: boolean;
+  productCount: number;
 };
 
-const inputClass =
-  "w-full rounded-lg border border-zinc-300 bg-white px-2 py-1 text-sm text-zinc-900 outline-none focus:border-emerald-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50";
+const fieldClass =
+  "w-full rounded-[11px] border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 outline-none transition focus:border-emerald-500 focus:shadow-[0_0_0_4px_rgba(45,212,191,0.13)]";
 
-const smallButton =
-  "rounded-lg border border-zinc-300 px-3 py-1 text-xs text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800";
+const iconButton =
+  "grid h-[34px] w-[34px] place-items-center rounded-[10px] border border-zinc-800 bg-zinc-900 text-zinc-500 transition hover:-translate-y-0.5 hover:border-emerald-500 hover:text-emerald-500 disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:border-zinc-800 disabled:hover:text-zinc-500";
 
-export function SourceRow({ source }: { source: Source }) {
+export function SourceRow({ source }: { source: SourceItem }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(source.name);
   const [method, setMethod] = useState(source.method);
@@ -72,107 +74,176 @@ export function SourceRow({ source }: { source: Source }) {
     });
   }
 
+  const hasProducts = source.productCount > 0;
+
   if (editing) {
     return (
-      <tr className="bg-zinc-50 dark:bg-zinc-800/40">
-        <td className="px-4 py-3">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={inputClass}
-          />
-          {message && <p className="mt-1 text-xs text-red-600">{message}</p>}
-        </td>
-        <td className="px-4 py-3">
-          <select
-            value={method}
-            onChange={(e) => setMethod(e.target.value)}
-            className={inputClass}
-          >
-            {SOURCE_METHODS.map((m) => (
-              <option key={m.value} value={m.value}>
-                {m.label}
-              </option>
-            ))}
-          </select>
-        </td>
-        <td className="px-4 py-3">
-          <input
-            value={baseUrl}
-            onChange={(e) => setBaseUrl(e.target.value)}
-            placeholder="Adres (isteğe bağlı)"
-            className={inputClass}
-          />
-        </td>
-        <td className="px-4 py-3">
-          <label className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
+      <div className="rounded-2xl border border-emerald-500/40 bg-zinc-900 p-[18px]">
+        <div className="grid gap-3">
+          <div>
+            <label className="mb-1.5 block text-xs font-bold text-zinc-500">
+              Kaynak adı
+            </label>
             <input
-              type="checkbox"
-              checked={isActive}
-              onChange={(e) => setIsActive(e.target.checked)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              autoFocus
+              className={fieldClass}
             />
-            Aktif
-          </label>
-        </td>
-        <td className="px-4 py-3">
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={save}
-              disabled={pending}
-              className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
-            >
-              {pending ? "Kaydediliyor..." : "Kaydet"}
-            </button>
-            <button
-              type="button"
-              onClick={cancel}
-              disabled={pending}
-              className={smallButton}
-            >
-              İptal
-            </button>
           </div>
-        </td>
-      </tr>
+          <div>
+            <label className="mb-1.5 block text-xs font-bold text-zinc-500">
+              Yöntem
+            </label>
+            <select
+              value={method}
+              onChange={(e) => setMethod(e.target.value)}
+              className={fieldClass}
+            >
+              {SOURCE_METHODS.map((m) => (
+                <option key={m.value} value={m.value}>
+                  {m.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-xs font-bold text-zinc-500">
+              Adres (isteğe bağlı)
+            </label>
+            <input
+              value={baseUrl}
+              onChange={(e) => setBaseUrl(e.target.value)}
+              placeholder="https://..."
+              className={fieldClass}
+            />
+          </div>
+
+          <button
+            type="button"
+            role="switch"
+            aria-checked={isActive}
+            onClick={() => setIsActive(!isActive)}
+            className="flex items-center gap-2.5 text-left text-sm font-semibold text-zinc-50"
+          >
+            <span
+              className={
+                "relative h-6 w-[42px] rounded-full transition-colors " +
+                (isActive ? "bg-emerald-500" : "bg-zinc-700")
+              }
+            >
+              <span
+                className={
+                  "absolute top-[3px] h-[18px] w-[18px] rounded-full bg-white shadow transition-all " +
+                  (isActive ? "left-[21px]" : "left-[3px]")
+                }
+              />
+            </span>
+            Kaynak aktif
+          </button>
+        </div>
+
+        {message && <p className="mt-3 text-xs text-red-500">{message}</p>}
+
+        <div className="mt-4 flex gap-2">
+          <button
+            type="button"
+            onClick={save}
+            disabled={pending}
+            className="rounded-[10px] bg-emerald-500 px-3.5 py-2 text-xs font-bold text-[#052e2b] transition hover:-translate-y-0.5 disabled:opacity-50"
+          >
+            {pending ? "Kaydediliyor..." : "Kaydet"}
+          </button>
+          <button
+            type="button"
+            onClick={cancel}
+            disabled={pending}
+            className="rounded-[10px] border border-zinc-800 px-3.5 py-2 text-xs font-bold text-zinc-50 transition hover:border-emerald-500 disabled:opacity-50"
+          >
+            İptal
+          </button>
+        </div>
+      </div>
     );
   }
 
   return (
-    <tr>
-      <td className="px-4 py-3">
-        <span className="font-medium text-zinc-900 dark:text-zinc-50">
-          {source.name}
+    <div
+      className={
+        "rounded-2xl border border-zinc-800 bg-zinc-900 p-[18px] transition-colors hover:border-emerald-500/40 " +
+        (source.is_active ? "" : "opacity-60")
+      }
+    >
+      <div className="flex items-start gap-3">
+        <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-emerald-500/15 text-emerald-400">
+          <AdminIcon name="globe" size={18} />
         </span>
-        {message && <p className="mt-1 text-xs text-red-600">{message}</p>}
-      </td>
-      <td className="px-4 py-3 text-zinc-700 dark:text-zinc-300">
-        {methodLabel(source.method)}
-      </td>
-      <td className="px-4 py-3 text-zinc-500">{source.base_url ?? "-"}</td>
-      <td className="px-4 py-3 text-zinc-700 dark:text-zinc-300">
-        {source.is_active ? "Aktif" : "Pasif"}
-      </td>
-      <td className="px-4 py-3">
-        <div className="flex gap-2">
+
+        <div className="min-w-0 flex-1">
+          <b className="block truncate text-[15px] text-zinc-50">
+            {source.name}
+          </b>
+          <small className="text-zinc-500">{methodLabel(source.method)}</small>
+        </div>
+
+        <div className="flex gap-1.5">
           <button
             type="button"
             onClick={startEdit}
             disabled={pending}
-            className={smallButton}
+            title="Düzenle"
+            aria-label="Düzenle"
+            className={iconButton}
           >
-            Düzenle
+            <AdminIcon name="edit" size={16} />
           </button>
           <button
             type="button"
             onClick={remove}
-            disabled={pending}
-            className="rounded-lg border border-red-300 px-3 py-1 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950"
+            disabled={pending || hasProducts}
+            title={
+              hasProducts
+                ? "Bağlı ürünler var, önce onları taşı ya da sil"
+                : "Sil"
+            }
+            aria-label="Sil"
+            className={iconButton}
           >
-            {pending ? "..." : "Sil"}
+            <AdminIcon name="trash" size={16} />
           </button>
         </div>
-      </td>
-    </tr>
+      </div>
+
+      {source.base_url && (
+        <a
+          href={source.base_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 block truncate text-xs text-zinc-500 hover:text-emerald-500"
+        >
+          {source.base_url}
+        </a>
+      )}
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <span
+          className={
+            "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold " +
+            (source.is_active
+              ? "bg-emerald-500/15 text-emerald-400"
+              : "bg-zinc-700/40 text-zinc-400")
+          }
+        >
+          <i className="h-1.5 w-1.5 rounded-full bg-current" />
+          {source.is_active ? "Aktif" : "Pasif"}
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-950 px-2.5 py-1 text-xs text-zinc-300">
+          <AdminIcon name="package" size={13} />
+          {source.productCount} ürün
+        </span>
+      </div>
+
+      {message && <p className="mt-3 text-xs text-red-500">{message}</p>}
+    </div>
   );
 }

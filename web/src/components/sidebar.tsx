@@ -151,7 +151,7 @@ export function Sidebar({
         Fiyat Takip
       </div>
 
-      <nav className="flex-1 overflow-y-auto">
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden">
         {groups.map((group) => (
           <div key={group.label}>
             <p className="px-2.5 pb-1.5 pt-3.5 text-[11px] font-extrabold uppercase tracking-[0.08em] text-zinc-500">

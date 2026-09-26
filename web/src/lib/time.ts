@@ -18,3 +18,51 @@ export function startOfTodayIso(): string {
   d.setHours(0, 0, 0, 0);
   return d.toISOString();
 }
+
+const TIME_ZONE = "Europe/Istanbul";
+
+function dayKey(d: Date): string {
+  return d.toLocaleDateString("en-CA", { timeZone: TIME_ZONE });
+}
+
+// "Bugün", "Dün" ya da "12 Eylül 2026" (Türkiye saatine göre).
+export function dayLabel(iso: string): string {
+  const key = dayKey(new Date(iso));
+  if (key === dayKey(new Date())) return "Bugün";
+  if (key === dayKey(new Date(Date.now() - 24 * 60 * 60 * 1000))) return "Dün";
+  return new Date(iso).toLocaleDateString("tr-TR", {
+    timeZone: TIME_ZONE,
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+// "14:32" (Türkiye saatine göre).
+export function clockTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString("tr-TR", {
+    timeZone: TIME_ZONE,
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+// "24 Eyl" (Türkiye saatine göre).
+export function shortDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("tr-TR", {
+    timeZone: TIME_ZONE,
+    day: "numeric",
+    month: "short",
+  });
+}
+
+// "24 Eyl 23:19" (Türkiye saatine göre).
+export function shortDateTime(iso: string): string {
+  return new Date(iso).toLocaleString("tr-TR", {
+    timeZone: TIME_ZONE,
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}

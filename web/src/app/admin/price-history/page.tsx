@@ -1,4 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
+import { shortDateTime } from "@/lib/time";
+import { PriceChart } from "@/components/price-chart";
+import { PriceHistoryFilter } from "@/components/price-history-filter";
 import { PriceRecordRow } from "@/components/price-record-row";
 
 export default async function PriceHistoryPage({
@@ -25,10 +28,39 @@ export default async function PriceHistoryPage({
   ]);
 
   const productList = products.data ?? [];
+  const rows = records.data ?? []; // yeniden eskiye
+
+  // Her kaydın, aynı ürünün bir önceki kaydına göre değişimi (%).
+  const changes = new Map<number, number | null>();
+  const previous = new Map<number, number>();
+  for (let i = rows.length - 1; i >= 0; i--) {
+    const r = rows[i];
+    const price = Number(r.price);
+    const before = previous.get(r.product_id);
+    changes.set(
+      r.id,
+      before !== undefined && before > 0 ? ((price - before) / before) * 100 : null,
+    );
+    previous.set(r.product_id, price);
+  }
+
+  const items = rows.map((r) => ({
+    id: r.id,
+    productName: productList.find((p) => p.id === r.product_id)?.name ?? "-",
+    price: Number(r.price),
+    currency: r.currency,
+    inStock: r.in_stock,
+    when: shortDateTime(r.checked_at),
+    changePct: changes.get(r.id) ?? null,
+  }));
+
+  const selectedName = filtered
+    ? (productList.find((p) => p.id === productId)?.name ?? "Ürün")
+    : null;
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
+      <h1 className="text-2xl font-bold tracking-[-0.02em] text-zinc-50">
         Fiyat geçmişi
       </h1>
       <p className="mt-1 text-sm text-zinc-500">
@@ -39,52 +71,45 @@ export default async function PriceHistoryPage({
         <p className="mt-6 text-sm text-red-600">Veriler alınamadı.</p>
       )}
 
-      <form method="get" className="mt-6 flex gap-3">
-        <select
-          name="product"
-          defaultValue={filtered ? String(productId) : ""}
-          className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-emerald-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
-        >
-          <option value="">Tüm ürünler</option>
-          {productList.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name}
-            </option>
-          ))}
-        </select>
-        <button
-          type="submit"
-          className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
-        >
-          Filtrele
-        </button>
-      </form>
+      <div className="mt-6 flex flex-wrap items-center gap-2.5">
+        <PriceHistoryFilter
+          products={productList}
+          current={filtered ? String(productId) : ""}
+        />
+        <span className="ml-auto text-sm text-zinc-500">
+          {items.length} kayıt
+        </span>
+      </div>
 
-      <div className="mt-6 overflow-x-auto rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+      {selectedName && (
+        <PriceChart
+          productName={selectedName}
+          currency={rows[0]?.currency ?? "TL"}
+          points={[...rows]
+            .reverse()
+            .map((r) => ({ price: Number(r.price), at: r.checked_at }))}
+        />
+      )}
+
+      <div className="mt-6 overflow-x-auto rounded-2xl border border-zinc-800 bg-zinc-900">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-800">
+          <thead className="border-b border-zinc-800 text-xs uppercase tracking-wider text-zinc-500">
             <tr>
-              <th className="px-4 py-3 font-medium">Ürün</th>
-              <th className="px-4 py-3 font-medium">Fiyat</th>
-              <th className="px-4 py-3 font-medium">Stok</th>
-              <th className="px-4 py-3 font-medium">Zaman</th>
-              <th className="px-4 py-3 font-medium">İşlemler</th>
+              <th className="px-4 py-3 font-bold">Zaman</th>
+              <th className="px-4 py-3 font-bold">Ürün</th>
+              <th className="px-4 py-3 font-bold">Fiyat</th>
+              <th className="px-4 py-3 font-bold">Değişim</th>
+              <th className="px-4 py-3 font-bold">Stok</th>
+              <th className="px-4 py-3 text-right font-bold">İşlem</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
-            {records.data?.map((record) => (
-              <PriceRecordRow
-                key={record.id}
-                record={record}
-                productName={
-                  productList.find((p) => p.id === record.product_id)?.name ??
-                  "-"
-                }
-              />
+          <tbody className="divide-y divide-zinc-800">
+            {items.map((item) => (
+              <PriceRecordRow key={item.id} item={item} />
             ))}
-            {records.data?.length === 0 && (
+            {items.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-zinc-500">
+                <td colSpan={6} className="px-4 py-8 text-center text-zinc-500">
                   Kayıt bulunamadı.
                 </td>
               </tr>
